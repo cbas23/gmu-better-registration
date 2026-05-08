@@ -11,7 +11,10 @@ function normalizeName(name: string): string[] {
     .filter((w) => w.length > 0);
 }
 
-function matchProfessor(searchName: string, professors: Professor[]): Professor | null {
+function matchProfessor(
+  searchName: string,
+  professors: Professor[],
+): Professor | null {
   const searchWords = normalizeName(searchName);
   for (const prof of professors) {
     const rmpWords = normalizeName(prof.name);
@@ -82,13 +85,17 @@ export function enhanceInstructor(
   tr: HTMLTableRowElement,
 ): void {
   const profLink = td.querySelector("a");
-  const profName = profLink?.textContent?.trim()?.replace(/\s*\(.*?\)\s*/g, "").trim();
+  const profName = profLink?.textContent
+    ?.trim()
+    ?.replace(/\s*\(.*?\)\s*/g, "")
+    .trim();
   if (!profName) return;
   if (td.dataset.rmpEnhanced) return;
   td.dataset.rmpEnhanced = "pending";
 
   td.style.display = "flex";
   td.style.alignItems = "stretch";
+  td.style.backgroundColor = "#ffffff";
   td.style.width = "max-content";
 
   if (profLink) {
@@ -110,13 +117,15 @@ export function enhanceInstructor(
         type: "rmp:searchProfessors",
         name: profName,
       });
-      const match = result?.professors?.length > 0
-        ? matchProfessor(profName, result.professors)
-        : null;
+      const match =
+        result?.professors?.length > 0
+          ? matchProfessor(profName, result.professors)
+          : null;
       professorCache.set(profName, match);
       renderRatingBadge(td, match);
     } catch {
       professorCache.set(profName, null);
+      renderRatingBadge(td, null);
     }
   })();
 }
@@ -125,29 +134,35 @@ function renderRatingBadge(
   td: HTMLTableCellElement,
   prof: Professor | null,
 ): void {
+  const badge = document.createElement("a");
+  badge.style.fontFamily = "monospace";
+  badge.style.fontWeight = "bold";
+  badge.style.fontSize = "11px";
+  badge.style.display = "flex";
+  badge.style.alignItems = "center";
+  badge.style.justifyContent = "center";
+  badge.style.textDecoration = "none";
+  badge.style.padding = "0 6px";
+  badge.style.boxSizing = "border-box";
+
   if (!prof || prof.overall_rating == null) {
+    badge.textContent = "nul";
+    badge.style.backgroundColor = "#eee";
+    badge.style.color = "#999";
+    badge.style.cursor = "default";
+    td.prepend(badge);
     td.dataset.rmpEnhanced = "no-data";
     return;
   }
 
   const rating = prof.overall_rating;
-  const link = document.createElement("a");
-  link.textContent = rating.toFixed(1);
-  link.href = `https://www.ratemyprofessors.com/professor/${prof.id}`;
-  link.target = "_blank";
-  link.rel = "noopener noreferrer";
-  link.style.backgroundColor = ratingBgColor(rating);
-  link.style.color = ratingColor(rating);
-  link.style.fontFamily = "monospace";
-  link.style.fontWeight = "bold";
-  link.style.fontSize = "11px";
-  link.style.display = "flex";
-  link.style.alignItems = "center";
-  link.style.justifyContent = "center";
-  link.style.textDecoration = "none";
-  link.style.padding = "0 6px";
-  link.style.cursor = "pointer";
-  link.style.boxSizing = "border-box";
+  badge.textContent = rating.toFixed(1);
+  badge.href = `https://www.ratemyprofessors.com/professor/${prof.id}`;
+  badge.target = "_blank";
+  badge.rel = "noopener noreferrer";
+  badge.style.backgroundColor = ratingBgColor(rating);
+  badge.style.color = ratingColor(rating);
+  badge.style.cursor = "pointer";
 
   const details: string[] = [];
   details.push(`${prof.overall_rating.toFixed(1)}/5 overall`);
@@ -157,9 +172,9 @@ function renderRatingBadge(
   if (prof.level_of_difficulty != null)
     details.push(`${prof.level_of_difficulty.toFixed(1)}/5 difficulty`);
   if (prof.department) details.push(prof.department);
-  link.title = details.join("\n");
+  badge.title = details.join("\n");
 
-  td.prepend(link);
+  td.prepend(badge);
   td.dataset.rmpEnhanced = "done";
 }
 
@@ -167,7 +182,51 @@ export function enhanceMeetingTime(
   td: HTMLTableCellElement,
   tr: HTMLTableRowElement,
 ): void {
-  td.style.color = "#6a4c93";
+  td.style.cssText = "";
+  td.style.padding = "0";
+  td.style.backgroundColor = "white";
+  td.style.position = "relative";
+
+  const overDiv = document.createElement("div");
+  overDiv.setAttribute("data-enhanced", "overDiv");
+  overDiv.style.backgroundColor = "blue";
+  overDiv.style.padding = "0";
+  overDiv.style.margin = "0";
+  overDiv.style.display = "flex";
+  overDiv.style.alignItems = "stretch";
+  overDiv.style.position = "absolute";
+  overDiv.style.top = "0";
+  overDiv.style.left = "0";
+  overDiv.style.width = "100%";
+  overDiv.style.height = "100%";
+  overDiv.style.zIndex = "1000";
+
+  if (!td.querySelector("[data-enhanced='overDiv']")) {
+    td.prepend(overDiv);
+  }
+
+  const meetingDiv: NodeListOf<HTMLElement> = td.querySelectorAll(".meeting");
+  for (const elem of meetingDiv) {
+    elem.style.height = "100%";
+    elem.style.backgroundColor = "#ddd";
+    const meetingTime: HTMLElement | null =
+      elem.querySelector(".meeting-schedule");
+    if (!meetingTime) continue;
+    meetingTime.style.padding = "2px 4px";
+    meetingTime.style.backgroundColor = "yellow";
+    meetingTime.style.display = "flex";
+    meetingTime.style.alignItems = "center";
+    meetingTime.style.justifyContent = "center";
+    meetingTime.style.width = "max-content";
+  }
+
+  // const toolTipText: NodeListOf<HTMLElement> =
+  //   meetingDiv.querySelectorAll(".tooltip-row");
+  // for (const elem of toolTipText) {
+  //   console.log("Tooltip: ", elem);
+  //   elem.style.setProperty("width", "0", "important");
+  //   elem.style.setProperty("overflow", "hidden", "important");
+  // }
 }
 
 export function enhanceStatus(

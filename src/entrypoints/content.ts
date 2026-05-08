@@ -37,14 +37,7 @@ const columnEnhancers: Record<
   attribute: enhanceAttribute,
 };
 
-function injectStyles() {
-  const style = document.createElement("style");
-  style.textContent = `#table1 { table-layout: auto !important; } #table1 th, #table1 td { width: max-content !important; padding: 2px !important; }`;
-  document.head.appendChild(style);
-}
-
 function main() {
-  injectStyles();
   const existingTable = document.getElementById("table1");
   if (existingTable) {
     observeTable(existingTable as HTMLTableElement);
