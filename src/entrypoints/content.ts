@@ -1,3 +1,4 @@
+import "@/assets/tailwind-content.css";
 import {
   enhanceCourseNumber,
   enhanceSequenceNumber,
@@ -11,6 +12,7 @@ import {
   enhanceLinked,
   enhanceAdd,
   enhanceAttribute,
+  enhanceNote,
   enhanceRow,
 } from "@/utils/enhance-columns";
 
@@ -23,18 +25,19 @@ const columnEnhancers: Record<
   string,
   (td: HTMLTableCellElement, tr: HTMLTableRowElement) => void
 > = {
-  courseNumber: enhanceCourseNumber,
-  sequenceNumber: enhanceSequenceNumber,
-  courseTitle: enhanceCourseTitle,
-  courseReferenceNumber: enhanceCourseReferenceNumber,
-  creditHours: enhanceCreditHours,
   instructor: enhanceInstructor,
-  meetingTime: enhanceMeetingTime,
+  // meetingTime: enhanceMeetingTime,
   status: enhanceStatus,
-  campus: enhanceCampus,
-  linked: enhanceLinked,
-  add: enhanceAdd,
   attribute: enhanceAttribute,
+  note: enhanceNote,
+  // courseNumber: enhanceCourseNumber,
+  // sequenceNumber: enhanceSequenceNumber,
+  // courseTitle: enhanceCourseTitle,
+  // courseReferenceNumber: enhanceCourseReferenceNumber,
+  // creditHours: enhanceCreditHours,
+  // campus: enhanceCampus,
+  // linked: enhanceLinked,
+  // add: enhanceAdd,
 };
 
 function main() {
@@ -54,10 +57,12 @@ function main() {
 }
 
 function observeTable(table: HTMLTableElement) {
-  modifyTable(table);
   const tableObserver = new MutationObserver(() => {
+    tableObserver.disconnect();
     modifyTable(table);
+    tableObserver.observe(table, { childList: true, subtree: true });
   });
+  modifyTable(table);
   tableObserver.observe(table, { childList: true, subtree: true });
 }
 
@@ -67,6 +72,10 @@ function modifyTable(table: HTMLTableElement) {
 
   rows.forEach((row) => {
     const tr = row as HTMLTableRowElement;
+    if (tr.dataset.rmpEnhanced) return;
+
+    tr.dataset.rmpEnhanced = "true";
+
     enhanceRow(tr);
     const tds = tr.querySelectorAll("td");
     tds.forEach((td) => {
