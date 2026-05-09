@@ -112,7 +112,7 @@ function StatusOverlay(props: StatusData): JSX.Element {
       </div>
       <div class="flex items-center gap-1 ml-auto">
         {props.isLinked && (
-          <span class="bg-sky-600 text-white font-mono font-bold py-0.5 px-1 text-md rounded-sm font-medium">
+          <span class="bg-sky-600 text-white font-mono font-bold py-0.5 px-1 text-md rounded-sm">
             L
           </span>
         )}

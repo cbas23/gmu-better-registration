@@ -85,7 +85,7 @@ export function extractInstructorData(
 function ProfTooltip(props: { prof: Professor }): JSX.Element {
   const p = props.prof;
   return (
-    <div class="flex flex-col bg-white border border-gray-400 p-3 gap-2 min-w-[180px]">
+    <div class="flex flex-col bg-white border border-gray-400 p-3 gap-2 min-w-45">
       <span class="font-bold text-sm">{p.name}</span>
       <Show when={p.department}>
         <span class="text-xs text-gray-400">{p.department}</span>
@@ -149,7 +149,7 @@ function ProfTooltip(props: { prof: Professor }): JSX.Element {
 
 function NullProfTooltip(props: { profName: string }): JSX.Element {
   return (
-    <div class="flex flex-col bg-white border border-gray-400 p-3 gap-1 min-w-[180px]">
+    <div class="flex flex-col bg-white border border-gray-400 p-3 gap-1 min-w-45">
       <span class="font-bold text-sm">{props.profName}</span>
       <span class="text-xs text-gray-500">
         click to search in ratemyprofessors.com
