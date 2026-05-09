@@ -74,14 +74,16 @@ function StatusOverlay(props: StatusData): JSX.Element {
       {props.waitList > 0 && (
         <span>
           Waitlist:{" "}
-          <span class="text-orange-700 font-bold">{props.waitListLeft}</span> /{" "}
+          <span class="text-amber-700 font-bold">{props.waitListLeft}</span> /{" "}
           {props.waitList} remaining
         </span>
       )}
       {props.hasTimeConflict && (
-        <span class="text-red-600">Time Conflict!</span>
+        <span class="text-red-600 font-bold">Time Conflict!</span>
       )}
-      {props.isLinked && <span class="text-sky-600">LINKED Section</span>}
+      {props.isLinked && (
+        <span class="text-sky-600 font-bold">LINKED Section</span>
+      )}
     </div>
   );
 
@@ -96,11 +98,14 @@ function StatusOverlay(props: StatusData): JSX.Element {
         >
           <b>{props.seatsLeft}</b> / {props.seats}
           {props.hasTimeConflict && (
-            <span class="absolute w-2 h-2 bg-red-600 rounded-full" style={{ top: "-2px", right: "-2px" }} />
+            <span
+              class="absolute w-2 h-2 bg-red-600 rounded-full"
+              style={{ top: "-2px", right: "-2px" }}
+            />
           )}
         </span>
         {props.waitList > 0 && (
-          <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 text-xs rounded-sm font-medium">
+          <span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 text-xs rounded-sm font-medium">
             <b>{props.waitListLeft}</b> / {props.waitList}
           </span>
         )}

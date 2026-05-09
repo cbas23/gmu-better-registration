@@ -29,9 +29,11 @@ function matchProfessor(
   professors: Professor[],
 ): Professor | null {
   const searchWords = normalizeName(searchName);
+  console.log("Searching for professor:", normalizeName(searchName));
   for (const prof of professors) {
     const rmpWords = normalizeName(prof.name);
     const allMatch = searchWords.every((w) => rmpWords.includes(w));
+    console.log("Matching professor:", prof.name, rmpWords, allMatch);
     if (allMatch) return prof;
   }
   return null;
@@ -151,7 +153,9 @@ function NullProfTooltip(props: { profName: string }): JSX.Element {
   return (
     <div class="flex flex-col bg-white border border-gray-400 p-3 gap-1 min-w-[180px]">
       <span class="font-bold text-sm">{props.profName}</span>
-      <span class="text-xs text-gray-500">click to search in ratemyprofessors.com</span>
+      <span class="text-xs text-gray-500">
+        click to search in ratemyprofessors.com
+      </span>
     </div>
   );
 }

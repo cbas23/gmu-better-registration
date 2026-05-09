@@ -31,7 +31,7 @@ function MeetingTimeOverlay(props: MeetingTimeData): JSX.Element {
   return (
     <div class="absolute inset-0 flex items-stretch">
       {props.meetings.map((m) => (
-        <div class="flex-1 flex items-center justify-center bg-yellow-100 px-1">
+        <div class="flex-1 flex items-center justify-center px-1">
           <span class="text-xs text-gray-800 whitespace-nowrap">
             {m.schedule}
           </span>
