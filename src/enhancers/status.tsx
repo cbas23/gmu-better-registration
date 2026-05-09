@@ -92,9 +92,12 @@ function StatusOverlay(props: StatusData): JSX.Element {
     >
       <div class="flex items-center gap-1">
         <span
-          class={`${full ? "bg-red-100 text-red-800" : "bg-sky-100 text-sky-800"} px-1.5 py-0.5 text-xs rounded-sm font-medium`}
+          class={`${full ? "bg-red-100 text-red-800" : "bg-sky-100 text-sky-800"} relative px-1.5 py-0.5 text-xs rounded-sm font-medium`}
         >
           <b>{props.seatsLeft}</b> / {props.seats}
+          {props.hasTimeConflict && (
+            <span class="absolute w-2 h-2 bg-red-600 rounded-full" style={{ top: "-2px", right: "-2px" }} />
+          )}
         </span>
         {props.waitList > 0 && (
           <span class="bg-orange-100 text-orange-800 px-1.5 py-0.5 text-xs rounded-sm font-medium">
@@ -103,11 +106,6 @@ function StatusOverlay(props: StatusData): JSX.Element {
         )}
       </div>
       <div class="flex items-center gap-1 ml-auto">
-        {props.hasTimeConflict && (
-          <span class="bg-red-600 text-white font-mono font-bold py-0.5 px-1 text-md rounded-sm font-medium">
-            T
-          </span>
-        )}
         {props.isLinked && (
           <span class="bg-sky-600 text-white font-mono font-bold py-0.5 px-1 text-md rounded-sm font-medium">
             L

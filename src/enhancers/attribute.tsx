@@ -45,10 +45,8 @@ function AttributeOverlay(props: AttributeData): JSX.Element {
   const tooltipContent = (
     <div class="flex flex-col bg-white border border-gray-400 p-2 gap-2">
       <span class="font-bold">Mason Core attributes:</span>
-      {props.attributes.map((attr, i) => (
-        <span
-          class={`${i % 2 === 0 ? "bg-gray-200" : "bg-gray-300"} px-2 py-1 text-xs text-gray-800 flex items-center w-max rounded-sm`}
-        >
+      {props.attributes.map((attr) => (
+        <span class="bg-gray-200 px-2 py-1 text-xs text-gray-800 flex items-center w-max rounded-sm">
           {attr}
         </span>
       ))}
@@ -61,11 +59,9 @@ function AttributeOverlay(props: AttributeData): JSX.Element {
       use:tooltip={{ content: tooltipContent, position: "left" }}
     >
       <Carousel>
-        {props.attributes.map((attr, i) => (
+        {props.attributes.map((attr) => (
           <div class="w-full h-full bg-white flex items-center px-1">
-            <span
-              class={`${i % 2 === 0 ? "bg-gray-200" : "bg-gray-300"} px-2 py-1 text-xs text-gray-800 flex items-center w-max rounded-sm`}
-            >
+            <span class="bg-gray-200 px-2 py-1 text-xs text-gray-800 flex items-center w-max rounded-sm">
               {attr}
             </span>
           </div>
