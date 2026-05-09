@@ -1,6 +1,9 @@
 import type { JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
+import { Carousel } from "@/utils/carousel";
+import { removeTooltip } from "@/utils/removeTooltip";
+// import { tooltip } from "@/utils/tooltip";
 
 const PILL_COLORS = [
   "bg-red-200",
@@ -22,6 +25,10 @@ export function extractAttributeData(
 ): AttributeData | null {
   const spans = td.querySelectorAll("span");
 
+  td.setAttribute("data-id", "0");
+  // remove the original tooltip when the mouse enters
+  removeTooltip(td);
+
   const brTags = td.querySelectorAll("br");
   brTags.forEach((br) => br.remove());
 
@@ -35,15 +42,34 @@ export function extractAttributeData(
 }
 
 function AttributeOverlay(props: AttributeData): JSX.Element {
-  return (
-    <div class="absolute inset-0 flex flex-wrap items-center gap-0.5 p-0.5 h-4">
+  const tooltipContent = (
+    <div class="flex flex-col bg-white border border-gray-400 p-2 gap-2">
       {props.attributes.map((attr, i) => (
         <span
-          class={`${PILL_COLORS[i % PILL_COLORS.length]} px-1 py-px rounded text-xs text-gray-800 inline-block`}
+          class={`${i % 2 === 0 ? "bg-gray-200" : "bg-gray-300"} px-2 py-1 text-xs text-gray-800 flex items-center w-max rounded-sm`}
         >
           {attr}
         </span>
       ))}
+    </div>
+  );
+
+  return (
+    <div
+      class="absolute inset-0 flex flex-col h-full pointer-events-auto"
+      use:tooltip={{ content: tooltipContent, position: "left" }}
+    >
+      <Carousel>
+        {props.attributes.map((attr, i) => (
+          <div class="w-full h-full bg-white flex items-center px-1">
+            <span
+              class={`${i % 2 === 0 ? "bg-gray-200" : "bg-gray-300"} px-2 py-1 text-xs text-gray-800 flex items-center w-max rounded-sm`}
+            >
+              {attr}
+            </span>
+          </div>
+        ))}
+      </Carousel>
     </div>
   );
 }

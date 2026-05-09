@@ -10,7 +10,7 @@ export function createOverlay(td: HTMLTableCellElement): HTMLDivElement | null {
 
   const overlay = document.createElement("div");
   overlay.setAttribute(OVERLAY_ATTR, "");
-  overlay.className = "absolute inset-0 z-10 pointer-events-none bg-white";
+  overlay.className = "absolute inset-0 z-10  bg-white pointer-events-none";
   td.appendChild(overlay);
 
   return overlay;
