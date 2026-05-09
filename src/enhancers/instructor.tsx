@@ -239,7 +239,7 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
               >
                 {p().overall_rating!.toFixed(1)}
               </span>
-              <span class="text-[11px] text-gray-700 truncate">{p().name}</span>
+              <span class="text-[11px] text-gray-700 truncate">{props.profName}</span>
             </a>
           </div>
         )}
