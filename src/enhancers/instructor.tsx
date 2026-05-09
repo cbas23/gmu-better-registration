@@ -29,11 +29,9 @@ function matchProfessor(
   professors: Professor[],
 ): Professor | null {
   const searchWords = normalizeName(searchName);
-  console.log("Searching for professor:", normalizeName(searchName));
   for (const prof of professors) {
     const rmpWords = normalizeName(prof.name);
     const allMatch = searchWords.every((w) => rmpWords.includes(w));
-    console.log("Matching professor:", prof.name, rmpWords, allMatch);
     if (allMatch) return prof;
   }
   return null;

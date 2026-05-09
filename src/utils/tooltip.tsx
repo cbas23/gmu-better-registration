@@ -16,6 +16,8 @@ declare module "solid-js" {
   }
 }
 
+let activeHide: (() => void) | null = null;
+
 function tooltip(
   el: HTMLElement,
   options: Accessor<TooltipOptions | JSX.Element>,
@@ -46,6 +48,10 @@ function tooltip(
   function show() {
     if (tooltipEl) return;
 
+    if (activeHide && activeHide !== hide) {
+      activeHide();
+    }
+
     const opts = options();
     const isOptions = (v: unknown): v is TooltipOptions =>
       typeof v === "object" && v !== null && "content" in v;
@@ -60,6 +66,7 @@ function tooltip(
 
     dispose = render(() => content, tooltipEl!);
     document.body.appendChild(tooltipEl);
+    activeHide = hide;
     position();
     requestAnimationFrame(() => {
       if (tooltipEl) tooltipEl.style.opacity = "1";
@@ -68,6 +75,7 @@ function tooltip(
 
   function hide() {
     if (!tooltipEl) return;
+    if (activeHide === hide) activeHide = null;
     tooltipEl.style.opacity = "0";
     setTimeout(() => {
       dispose?.();

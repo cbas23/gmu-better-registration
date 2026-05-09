@@ -26,7 +26,7 @@ const columnEnhancers: Record<
   (td: HTMLTableCellElement, tr: HTMLTableRowElement) => void
 > = {
   instructor: enhanceInstructor,
-  // meetingTime: enhanceMeetingTime,
+  meetingTime: enhanceMeetingTime,
   status: enhanceStatus,
   attribute: enhanceAttribute,
   note: enhanceNote,
