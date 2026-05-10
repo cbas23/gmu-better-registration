@@ -16,5 +16,6 @@ export function enhanceRow(tr: HTMLTableRowElement) {
   const tds = tr.querySelectorAll("td");
   tds.forEach((td) => {
     td.style.setProperty("padding", "2px");
+    td.style.setProperty("padding-left", "8px");
   });
 }

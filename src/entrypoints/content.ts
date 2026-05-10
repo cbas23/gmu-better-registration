@@ -108,6 +108,7 @@ function modifyTable(table: HTMLTableElement) {
 
   rows.forEach((row) => {
     const tr = row as HTMLTableRowElement;
+
     if (tr.dataset.rmpEnhanced) return;
 
     tr.dataset.rmpEnhanced = "true";
