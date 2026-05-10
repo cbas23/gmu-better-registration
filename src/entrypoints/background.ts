@@ -1,14 +1,5 @@
 import { searchProfessors, GMU_SCHOOL_LEGACY_ID } from "@/utils/rmp";
-
-function normalizeProfessorName(name: string): string {
-  const commaIndex = name.indexOf(",");
-  if (commaIndex !== -1) {
-    const last = name.slice(0, commaIndex).trim();
-    const first = name.slice(commaIndex + 1).trim();
-    if (first && last) return `${first} ${last}`;
-  }
-  return name.trim();
-}
+import { normalizeProfessorName } from "@/utils/names";
 
 export default defineBackground(() => {
   console.log("Hello background!", { id: browser.runtime.id });

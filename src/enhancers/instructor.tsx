@@ -3,36 +3,17 @@ import { render } from "solid-js/web";
 import type { Professor } from "@/utils/rmp";
 import { schoolNodeId, GMU_SCHOOL_LEGACY_ID } from "@/utils/rmp";
 import { createOverlay } from "@/utils/overlay";
-import { tooltip, type TooltipOptions } from "@/utils/tooltip";
-
-declare module "solid-js" {
-  namespace JSX {
-    interface Directives {
-      tooltip: TooltipOptions | JSX.Element;
-    }
-  }
-}
+import { tooltip } from "@/utils/tooltip";
+import { matchProfessorName } from "@/utils/names";
 
 const professorCache = new Map<string, Professor | null>();
-
-function normalizeName(name: string): string[] {
-  return name
-    .toLowerCase()
-    .replace(/[,.\s]+/g, " ")
-    .trim()
-    .split(/\s+/)
-    .filter((w) => w.length > 0);
-}
 
 function matchProfessor(
   searchName: string,
   professors: Professor[],
 ): Professor | null {
-  const searchWords = normalizeName(searchName);
   for (const prof of professors) {
-    const rmpWords = normalizeName(prof.name);
-    const allMatch = searchWords.every((w) => rmpWords.includes(w));
-    if (allMatch) return prof;
+    if (matchProfessorName(searchName, prof.name)) return prof;
   }
   return null;
 }

@@ -1,32 +1,3 @@
-import type { JSX } from "solid-js";
-import { render } from "solid-js/web";
-import { createOverlay } from "@/utils/overlay";
+import { createTextEnhancer } from "./simple-text";
 
-export interface TextData {
-  text: string;
-}
-
-export function extractCourseTitleData(
-  td: HTMLTableCellElement,
-): TextData | null {
-  const text = td.textContent?.trim();
-  if (!text) return null;
-  return { text };
-}
-
-function CourseTitleOverlay(props: TextData): JSX.Element {
-  return (
-    <div class="absolute inset-0 flex items-center">
-      <span class="text-teal-600">{props.text}</span>
-    </div>
-  );
-}
-
-export function enhanceCourseTitle(td: HTMLTableCellElement): void {
-  const data = extractCourseTitleData(td);
-  if (!data) return;
-
-  const overlay = createOverlay(td);
-  if (!overlay) return;
-  render(() => <CourseTitleOverlay {...data} />, overlay);
-}
+export const enhanceCourseTitle = createTextEnhancer("text-teal-600");

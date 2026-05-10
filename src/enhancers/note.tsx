@@ -2,7 +2,7 @@ import type { JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { tooltip } from "@/utils/tooltip";
-import { removeTooltip } from "@/utils/utils";
+import { removeTooltip, clearTitle } from "@/utils/utils";
 
 export interface TextData {
   text: string;

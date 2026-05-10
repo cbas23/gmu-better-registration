@@ -1,20 +1,11 @@
 import "@/assets/tailwind-content.css";
-import {
-  enhanceCourseNumber,
-  enhanceSequenceNumber,
-  enhanceCourseTitle,
-  enhanceCourseReferenceNumber,
-  enhanceCreditHours,
-  enhanceInstructor,
-  enhanceMeetingTime,
-  enhanceStatus,
-  enhanceCampus,
-  enhanceLinked,
-  enhanceAdd,
-  enhanceAttribute,
-  enhanceNote,
-  enhanceRow,
-} from "@/utils/enhance-columns";
+import { enhanceInstructor } from "@/enhancers/instructor";
+import { enhanceMeetingTime } from "@/enhancers/meeting-time";
+import { enhanceStatus } from "@/enhancers/status";
+import { enhanceLinked } from "@/enhancers/linked";
+import { enhanceAdd } from "@/enhancers/add";
+import { enhanceAttribute } from "@/enhancers/attribute";
+import { enhanceNote } from "@/enhancers/note";
 
 export default defineContentScript({
   matches: ["*://ssbstureg.gmu.edu/StudentRegistrationSsb/*"],
@@ -32,12 +23,6 @@ const columnEnhancers: Record<
   note: enhanceNote,
   linked: enhanceLinked,
   add: enhanceAdd,
-  // courseNumber: enhanceCourseNumber,
-  // sequenceNumber: enhanceSequenceNumber,
-  // courseTitle: enhanceCourseTitle,
-  // courseReferenceNumber: enhanceCourseReferenceNumber,
-  // creditHours: enhanceCreditHours,
-  // campus: enhanceCampus,
 };
 
 const observedTables = new WeakSet<HTMLTableElement>();
@@ -88,19 +73,13 @@ function observeTable(table: HTMLTableElement) {
 }
 
 function modifyTable(table: HTMLTableElement) {
-  const ths = table.querySelectorAll("thead th");
+  const ths = table.querySelectorAll<HTMLElement>("thead th");
   ths.forEach((th) => {
-    (th as HTMLElement).style.setProperty(
-      "background-color",
-      "#e5e7eb",
-      "important",
-    );
-    (th as HTMLElement).style.setProperty("color", "#1f2937", "important");
-    (th as HTMLElement).style.setProperty(
-      "border-bottom",
-      "2px solid #9ca3af",
-      "important",
-    );
+    th.style.setProperty("background-color", "#e5e7eb", "important");
+    th.style.setProperty("color", "#1f2937", "important");
+    th.style.setProperty("border-bottom", "2px solid #9ca3af", "important");
+
+    console.log(th.getAttribute("data-property"));
   });
 
   const rows = table.querySelectorAll("tbody tr");
@@ -113,8 +92,12 @@ function modifyTable(table: HTMLTableElement) {
 
     tr.dataset.rmpEnhanced = "true";
 
-    enhanceRow(tr);
     const tds = tr.querySelectorAll("td");
+    tds.forEach((td) => {
+      td.style.setProperty("padding", "2px");
+      td.style.setProperty("padding-left", "8px");
+    });
+
     tds.forEach((td) => {
       const key = td.getAttribute("xe-field");
       if (key && columnEnhancers[key]) {

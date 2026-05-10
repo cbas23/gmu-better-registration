@@ -2,15 +2,7 @@ import type { JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { Carousel } from "@/utils/carousel";
-import { tooltip, type TooltipOptions } from "@/utils/tooltip";
-
-declare module "solid-js" {
-  namespace JSX {
-    interface Directives {
-      tooltip: TooltipOptions | JSX.Element;
-    }
-  }
-}
+import { tooltip } from "@/utils/tooltip";
 
 export interface MeetingInfo {
   days: string[];
