@@ -40,20 +40,41 @@ const columnEnhancers: Record<
   // add: enhanceAdd,
 };
 
+const observedTables = new WeakSet<HTMLTableElement>();
+
 function main() {
-  const existingTable = document.getElementById("table1");
-  if (existingTable) {
-    observeTable(existingTable as HTMLTableElement);
+  const container = document.getElementById("tabs-classSearch");
+  if (container) {
+    observeContainer(container);
   } else {
     const docObserver = new MutationObserver((_, obs) => {
-      const table = document.getElementById("table1");
-      if (table) {
+      const el = document.getElementById("tabs-classSearch");
+      if (el) {
         obs.disconnect();
-        observeTable(table as HTMLTableElement);
+        observeContainer(el);
       }
     });
     docObserver.observe(document.body, { childList: true, subtree: true });
   }
+}
+
+function observeContainer(container: Element) {
+  container.querySelectorAll("table").forEach((table) => {
+    if (!observedTables.has(table as HTMLTableElement)) {
+      observedTables.add(table as HTMLTableElement);
+      observeTable(table as HTMLTableElement);
+    }
+  });
+
+  const containerObserver = new MutationObserver(() => {
+    container.querySelectorAll("table").forEach((table) => {
+      if (!observedTables.has(table as HTMLTableElement)) {
+        observedTables.add(table as HTMLTableElement);
+        observeTable(table as HTMLTableElement);
+      }
+    });
+  });
+  containerObserver.observe(container, { childList: true, subtree: true });
 }
 
 function observeTable(table: HTMLTableElement) {
