@@ -2,9 +2,10 @@ import type { JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { Carousel } from "@/utils/carousel";
+import { EnhancedTable } from "../utils/enhanced-table";
 import { tooltip } from "@/utils/tooltip";
 
-export interface MeetingInfo {
+interface MeetingInfo {
   days: string[];
   startTime: string;
   endTime: string;
@@ -16,7 +17,7 @@ export interface MeetingInfo {
   schedule: string;
 }
 
-export interface MeetingTimeData {
+interface MeetingTimeData {
   meetings: MeetingInfo[];
 }
 
@@ -68,7 +69,7 @@ function parseTooltipRows(meetingEl: Element): Record<string, string> {
   return result;
 }
 
-export function extractMeetingTimeData(
+function extractMeetingTimeData(
   td: HTMLTableCellElement,
 ): MeetingTimeData | null {
   const meetingEls = td.querySelectorAll(".meeting");
@@ -256,7 +257,7 @@ function MeetingTimeOverlay(props: MeetingTimeData): JSX.Element {
   );
 }
 
-export function enhanceMeetingTime(td: HTMLTableCellElement): void {
+function enhanceMeetingTime(td: HTMLTableCellElement): void {
   const data = extractMeetingTimeData(td);
   if (!data) return;
 
@@ -272,3 +273,5 @@ export function enhanceMeetingTime(td: HTMLTableCellElement): void {
     (el as HTMLElement).style.display = "none";
   }
 }
+
+EnhancedTable.registerEnhancer("meetingTime", enhanceMeetingTime);

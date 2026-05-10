@@ -4,6 +4,7 @@ import { createOverlay } from "@/utils/overlay";
 import { Carousel } from "@/utils/carousel";
 import { removeTooltip } from "@/utils/utils";
 import { tooltip } from "@/utils/tooltip";
+import { EnhancedTable } from "../utils/enhanced-table";
 
 const PILL_COLORS = [
   "bg-red-200",
@@ -16,13 +17,11 @@ const PILL_COLORS = [
   "bg-pink-200",
 ];
 
-export interface AttributeData {
+interface AttributeData {
   attributes: string[];
 }
 
-export function extractAttributeData(
-  td: HTMLTableCellElement,
-): AttributeData | null {
+function extractAttributeData(td: HTMLTableCellElement): AttributeData | null {
   const spans = td.querySelectorAll("span");
 
   td.setAttribute("data-id", "0");
@@ -71,7 +70,7 @@ function AttributeOverlay(props: AttributeData): JSX.Element {
   );
 }
 
-export function enhanceAttribute(td: HTMLTableCellElement): void {
+function enhanceAttribute(td: HTMLTableCellElement): void {
   const data = extractAttributeData(td);
   if (!data) return;
 
@@ -79,3 +78,5 @@ export function enhanceAttribute(td: HTMLTableCellElement): void {
   if (!overlay) return;
   render(() => <AttributeOverlay {...data} />, overlay);
 }
+
+EnhancedTable.registerEnhancer("attribute", enhanceAttribute);

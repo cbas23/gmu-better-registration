@@ -5,6 +5,7 @@ import { schoolNodeId, GMU_SCHOOL_LEGACY_ID } from "@/utils/rmp";
 import { createOverlay } from "@/utils/overlay";
 import { tooltip } from "@/utils/tooltip";
 import { matchProfessorName } from "@/utils/names";
+import { EnhancedTable } from "../utils/enhanced-table";
 
 const professorCache = new Map<string, Professor | null>();
 
@@ -46,11 +47,11 @@ function takeAgainColor(percent: number): string {
   return "#c43340";
 }
 
-export interface InstructorData {
+interface InstructorData {
   profName: string;
 }
 
-export function extractInstructorData(
+function extractInstructorData(
   td: HTMLTableCellElement,
 ): InstructorData | null {
   const profLink = td.querySelector("a");
@@ -231,7 +232,7 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
   );
 }
 
-export function enhanceInstructor(td: HTMLTableCellElement): void {
+function enhanceInstructor(td: HTMLTableCellElement): void {
   const data = extractInstructorData(td);
   if (!data) return;
   td.dataset.rmpEnhanced = "pending";
@@ -243,3 +244,5 @@ export function enhanceInstructor(td: HTMLTableCellElement): void {
 
   render(() => <InstructorOverlay {...data} />, overlay);
 }
+
+EnhancedTable.registerEnhancer("instructor", enhanceInstructor);

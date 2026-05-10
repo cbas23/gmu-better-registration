@@ -1,5 +1,8 @@
 import { removeTooltip } from "@/utils/utils";
+import { EnhancedTable } from "../utils/enhanced-table";
 
-export function enhanceLinked(td: HTMLTableCellElement): void {
+function enhanceLinked(td: HTMLTableCellElement): void {
   removeTooltip(td);
 }
+
+EnhancedTable.registerEnhancer("linked", enhanceLinked);

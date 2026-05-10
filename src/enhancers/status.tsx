@@ -3,8 +3,9 @@ import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { tooltip } from "@/utils/tooltip";
 import { removeTooltip, clearTitle } from "@/utils/utils";
+import { EnhancedTable } from "../utils/enhanced-table";
 
-export interface StatusData {
+interface StatusData {
   seats: number;
   seatsLeft: number;
   waitList: number;
@@ -13,7 +14,7 @@ export interface StatusData {
   isLinked: boolean;
 }
 
-export function extractStatusData(td: HTMLTableCellElement): StatusData | null {
+function extractStatusData(td: HTMLTableCellElement): StatusData | null {
   removeTooltip(td);
 
   const brElements = td.querySelectorAll("br");
@@ -123,7 +124,7 @@ function StatusOverlay(props: StatusData): JSX.Element {
   );
 }
 
-export function enhanceStatus(td: HTMLTableCellElement): void {
+function enhanceStatus(td: HTMLTableCellElement): void {
   const data = extractStatusData(td);
   if (!data) return;
 
@@ -131,3 +132,5 @@ export function enhanceStatus(td: HTMLTableCellElement): void {
   if (!overlay) return;
   render(() => <StatusOverlay {...data} />, overlay);
 }
+
+EnhancedTable.registerEnhancer("status", enhanceStatus);

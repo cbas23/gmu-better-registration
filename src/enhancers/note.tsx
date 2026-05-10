@@ -3,13 +3,14 @@ import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { tooltip } from "@/utils/tooltip";
 import { removeTooltip, clearTitle } from "@/utils/utils";
+import { EnhancedTable } from "../utils/enhanced-table";
 
-export interface TextData {
+interface TextData {
   text: string;
   lines: string[];
 }
 
-export function extractNoteData(td: HTMLTableCellElement): TextData | null {
+function extractNoteData(td: HTMLTableCellElement): TextData | null {
   // class="gmu-section-note"
   const note = td.querySelector<HTMLSpanElement>(".gmu-section-note");
   if (!note) return null;
@@ -54,7 +55,7 @@ function NoteOverlay(props: TextData): JSX.Element {
   );
 }
 
-export function enhanceNote(td: HTMLTableCellElement): void {
+function enhanceNote(td: HTMLTableCellElement): void {
   const data = extractNoteData(td);
   if (!data) return;
 
@@ -62,3 +63,5 @@ export function enhanceNote(td: HTMLTableCellElement): void {
   if (!overlay) return;
   render(() => <NoteOverlay {...data} />, overlay);
 }
+
+EnhancedTable.registerEnhancer("note", enhanceNote);
