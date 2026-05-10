@@ -7,3 +7,7 @@ export function removeTooltip(td: HTMLTableCellElement) {
     }
   };
 }
+
+export function clearTitle(td: HTMLTableCellElement) {
+  td.title = "";
+}

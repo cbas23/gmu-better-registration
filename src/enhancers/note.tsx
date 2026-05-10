@@ -2,7 +2,7 @@ import type { JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { tooltip } from "@/utils/tooltip";
-import { removeTooltip } from "@/utils/removeTooltip";
+import { removeTooltip } from "@/utils/utils";
 
 export interface TextData {
   text: string;
@@ -17,6 +17,7 @@ export function extractNoteData(td: HTMLTableCellElement): TextData | null {
   note.style.display = "none";
 
   removeTooltip(td);
+  clearTitle(td);
 
   return { text: noteText ?? "", lines: noteText?.split("<br>") ?? [] };
 }

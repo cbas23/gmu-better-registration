@@ -2,7 +2,7 @@ import type { JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { Carousel } from "@/utils/carousel";
-import { removeTooltip } from "@/utils/removeTooltip";
+import { removeTooltip } from "@/utils/utils";
 // import { tooltip } from "@/utils/tooltip";
 
 const PILL_COLORS = [

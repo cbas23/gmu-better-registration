@@ -2,7 +2,7 @@ import type { JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { tooltip } from "@/utils/tooltip";
-import { removeTooltip } from "@/utils/removeTooltip";
+import { removeTooltip } from "@/utils/utils";
 
 export interface StatusData {
   seats: number;
@@ -18,6 +18,8 @@ export function extractStatusData(td: HTMLTableCellElement): StatusData | null {
 
   const brElements = td.querySelectorAll("br");
   brElements.forEach((br) => br.remove());
+
+  clearTitle(td);
 
   const boldSpans = Array.from(
     td.querySelectorAll<HTMLSpanElement>("span.status-bold"),
