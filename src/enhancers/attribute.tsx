@@ -43,7 +43,7 @@ export function extractAttributeData(
 
 function AttributeOverlay(props: AttributeData): JSX.Element {
   const tooltipContent = (
-    <div class="flex flex-col bg-white border border-gray-400 p-2 gap-2">
+    <div class="flex flex-col border border-gray-400 bg-white p-2 gap-2">
       <span class="font-bold">Attributes:</span>
       {props.attributes.map((attr) => (
         <span class="bg-gray-200 px-2 py-1 text-xs text-gray-800 flex items-center w-max rounded-sm">
@@ -60,7 +60,7 @@ function AttributeOverlay(props: AttributeData): JSX.Element {
     >
       <Carousel>
         {props.attributes.map((attr) => (
-          <div class="w-full h-full bg-white flex items-center px-1">
+          <div class="w-full h-full flex items-center px-1">
             <span class="bg-gray-200 px-2 py-1 text-xs text-gray-800 flex items-center w-max rounded-sm">
               {attr}
             </span>

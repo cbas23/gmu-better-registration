@@ -1,2 +1,22 @@
 @import "tailwindcss/theme";
 @import "tailwindcss/utilities";
+
+table tbody tr {
+  transition: background-color 150ms ease;
+}
+
+table tbody tr:hover {
+  background-color: #f2f8fc !important;
+}
+
+table tbody tr:hover td {
+  background-color: #f2f8fc !important;
+}
+
+table tbody tr:hover [data-custom-overlay] {
+  background-color: rgb(248, 248, 248) !important;
+}
+
+table tbody tr.selected [data-custom-overlay] {
+  background-color: rgb(248, 248, 248) !important;
+}
