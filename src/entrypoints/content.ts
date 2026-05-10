@@ -30,14 +30,14 @@ const columnEnhancers: Record<
   status: enhanceStatus,
   attribute: enhanceAttribute,
   note: enhanceNote,
+  linked: enhanceLinked,
+  add: enhanceAdd,
   // courseNumber: enhanceCourseNumber,
   // sequenceNumber: enhanceSequenceNumber,
   // courseTitle: enhanceCourseTitle,
   // courseReferenceNumber: enhanceCourseReferenceNumber,
   // creditHours: enhanceCreditHours,
   // campus: enhanceCampus,
-  // linked: enhanceLinked,
-  // add: enhanceAdd,
 };
 
 const observedTables = new WeakSet<HTMLTableElement>();
@@ -90,9 +90,17 @@ function observeTable(table: HTMLTableElement) {
 function modifyTable(table: HTMLTableElement) {
   const ths = table.querySelectorAll("thead th");
   ths.forEach((th) => {
-    (th as HTMLElement).style.setProperty("background-color", "#e5e7eb", "important");
+    (th as HTMLElement).style.setProperty(
+      "background-color",
+      "#e5e7eb",
+      "important",
+    );
     (th as HTMLElement).style.setProperty("color", "#1f2937", "important");
-    (th as HTMLElement).style.setProperty("border-bottom", "2px solid #9ca3af", "important");
+    (th as HTMLElement).style.setProperty(
+      "border-bottom",
+      "2px solid #9ca3af",
+      "important",
+    );
   });
 
   const rows = table.querySelectorAll("tbody tr");

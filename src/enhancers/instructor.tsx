@@ -206,7 +206,7 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
             rel="noopener noreferrer"
             class="flex items-center gap-1.5 w-full h-full no-underline"
           >
-            <span class="font-mono font-bold text-[11px] leading-none flex items-center justify-center aspect-square h-8 bg-gray-200 text-gray-500">
+            <span class="font-mono font-bold text-[11px] leading-none flex items-center justify-center aspect-square h-8 bg-gray-100 text-gray-400">
               N/A
             </span>
             <span class="text-[11px] text-gray-400 truncate">
@@ -239,7 +239,9 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
               >
                 {p().overall_rating!.toFixed(1)}
               </span>
-              <span class="text-[11px] text-gray-700 truncate">{props.profName}</span>
+              <span class="text-[11px] text-gray-700 truncate">
+                {props.profName}
+              </span>
             </a>
           </div>
         )}
