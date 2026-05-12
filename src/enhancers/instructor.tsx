@@ -20,6 +20,7 @@ function matchProfessor(
 }
 
 function ratingColor(rating: number): string {
+  if (rating === 0) return "#9ca3af";
   if (rating >= 4) return "#1f7a70";
   if (rating >= 3) return "#b89a3a";
   if (rating >= 2) return "#d4842a";
@@ -27,6 +28,7 @@ function ratingColor(rating: number): string {
 }
 
 function ratingBgColor(rating: number): string {
+  if (rating === 0) return "#f3f4f6";
   if (rating >= 4) return "#d4f0eb";
   if (rating >= 3) return "#fdf3d7";
   if (rating >= 2) return "#fde8d0";
@@ -34,6 +36,7 @@ function ratingBgColor(rating: number): string {
 }
 
 function difficultyColor(difficulty: number): string {
+  if (difficulty === 0) return "#9ca3af";
   if (difficulty <= 2) return "#1f7a70";
   if (difficulty <= 3) return "#b89a3a";
   if (difficulty <= 4) return "#d4842a";
@@ -41,6 +44,7 @@ function difficultyColor(difficulty: number): string {
 }
 
 function takeAgainColor(percent: number): string {
+  if (percent === -1) return "#9ca3af";
   if (percent >= 80) return "#1f7a70";
   if (percent >= 60) return "#b89a3a";
   if (percent >= 40) return "#d4842a";
@@ -112,7 +116,7 @@ function ProfTooltip(props: { prof: Professor }): JSX.Element {
                 class="font-bold"
                 style={{ color: takeAgainColor(p.percent_take_again!) }}
               >
-                {p.percent_take_again!.toFixed(0)}
+                {p.percent_take_again === -1 ? "-" : p.percent_take_again!.toFixed(0)}
               </span>
               <span class="text-gray-500">%</span>
             </span>

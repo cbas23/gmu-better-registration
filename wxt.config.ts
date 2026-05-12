@@ -7,6 +7,10 @@ export default defineConfig({
   srcDir: "src",
 
   manifest: {
+    name: "GMU Better Registration",
+    description: "Enhances GMU course registration with RateMyProfessors data",
+    version: "1.0.0",
+    author: { email: "sebas.cardozo.scp@gmail.com" },
     host_permissions: ["https://www.ratemyprofessors.com/*"],
   },
   webExt: {
