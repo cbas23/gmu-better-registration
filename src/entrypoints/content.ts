@@ -7,6 +7,7 @@ import "@/enhancers/attribute";
 import "@/enhancers/note";
 import "@/enhancers/linked";
 import "@/enhancers/add";
+import "@/enhancers/schedule-type";
 
 export default defineContentScript({
   matches: ["*://ssbstureg.gmu.edu/StudentRegistrationSsb/*"],
