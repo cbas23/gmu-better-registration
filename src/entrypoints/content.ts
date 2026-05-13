@@ -33,18 +33,18 @@ function main() {
 }
 
 function observeContainer(container: Element) {
-  container.querySelectorAll("table").forEach((table) => {
-    if (!observedTables.has(table as HTMLTableElement)) {
-      observedTables.add(table as HTMLTableElement);
-      new EnhancedTable(table as HTMLTableElement).start();
+  container.querySelectorAll<HTMLTableElement>("table").forEach((table) => {
+    if (!observedTables.has(table)) {
+      observedTables.add(table);
+      new EnhancedTable(table).start();
     }
   });
 
   const containerObserver = new MutationObserver(() => {
-    container.querySelectorAll("table").forEach((table) => {
-      if (!observedTables.has(table as HTMLTableElement)) {
-        observedTables.add(table as HTMLTableElement);
-        new EnhancedTable(table as HTMLTableElement).start();
+    container.querySelectorAll<HTMLTableElement>("table").forEach((table) => {
+      if (!observedTables.has(table)) {
+        observedTables.add(table);
+        new EnhancedTable(table).start();
       }
     });
   });
