@@ -9,8 +9,10 @@ export default defineConfig({
   manifest: {
     name: "GMU Better Registration",
     description: "Enhances GMU course registration with RateMyProfessors data",
-    version: "0.2.0",
-    author: "sebas.cardozo.scp@gmail.com",
+    version: "0.2.2",
+    author: {
+      email: "sebas.cardozo.scp@gmail.com",
+    },
     host_permissions: ["https://www.ratemyprofessors.com/*"],
     browser_specific_settings: {
       gecko: {
