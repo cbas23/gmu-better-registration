@@ -17,12 +17,25 @@ export default defineContentScript({
 const observedTables = new WeakSet<HTMLTableElement>();
 
 function main() {
-  const container = document.getElementById("tabs-classSearch");
+  console.log("Current page URL:", window.location.href);
+  let tableContainerNameID = "tabs-classSearch";
+
+  if (window.location.pathname.includes("classSearch")) {
+    tableContainerNameID = "searchResultsParent";
+  }
+  if (window.location.pathname.includes("registrationHistory")) {
+    tableContainerNameID = "lookupScheduleTable";
+  }
+  if (window.location.pathname.includes("courseSearch")) {
+    tableContainerNameID = "searchResults";
+  }
+
+  const container = document.getElementById(tableContainerNameID);
   if (container) {
     observeContainer(container);
   } else {
     const docObserver = new MutationObserver((_, obs) => {
-      const el = document.getElementById("tabs-classSearch");
+      const el = document.getElementById(tableContainerNameID);
       if (el) {
         obs.disconnect();
         observeContainer(el);

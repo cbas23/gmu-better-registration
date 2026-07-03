@@ -4,8 +4,10 @@
 - [x] remove tooltip for hover
 - [x] add some padding to table elements
 - [x] Profs with no rating gray the 0.0
-- [ ] Add icon + branding
+- [x] Add icon + branding
 - [x] Refractor
+- [x] Fix for ALL tables
+- [ ] Custom sizes
 
 ## Maybe Ideas
 
