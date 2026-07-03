@@ -1,27 +1,41 @@
-export function normalizeProfessorName(name: string): string {
-  const commaIndex = name.indexOf(",");
-  if (commaIndex !== -1) {
-    const last = name.slice(0, commaIndex).trim();
-    const first = name.slice(commaIndex + 1).trim();
-    if (first && last) return `${first} ${last}`;
-  }
-  return name.trim();
+export function normalizeTableProf(name: string): string {
+  return splitTableProf(name).join(" ");
 }
 
-export function normalizeName(name: string): string[] {
-  return name
-    .toLowerCase()
-    .replace(/[,.\s]+/g, " ")
-    .trim()
-    .split(/\s+/)
-    .filter((w) => w.length > 0);
+function splitTableProf(name: string): string[] {
+  const cleaned = name.replace(/\s*\(.*?\)\s*/g, "").trim();
+  const commaIndex = cleaned.indexOf(",");
+  if (commaIndex !== -1) {
+    const last = cleaned.slice(0, commaIndex).trim().split(/\s+/);
+    const first = cleaned
+      .slice(commaIndex + 1)
+      .trim()
+      .split(/\s+/);
+    return [...first, ...last];
+  }
+  return cleaned.split(/\s+/);
+}
+
+function splitRMPProf(name: string): string[] {
+  return name.split(/\s+/);
 }
 
 export function matchProfessorName(
-  searchName: string,
-  rmpName: string,
+  tableProfName: string,
+  rmpProfName: string,
 ): boolean {
-  const searchWords = normalizeName(searchName);
-  const rmpWords = normalizeName(rmpName);
-  return searchWords.every((w) => rmpWords.includes(w));
+  const a = splitTableProf(tableProfName.trim()).map((w) => w.toLowerCase());
+  const b = splitRMPProf(rmpProfName.trim()).map((w) => w.toLowerCase());
+
+  console.log("comp prof: ", a, b);
+
+  if (a.length === 0 || b.length === 0) return false;
+  if (a[0] !== b[0]) return false;
+
+  const restA = new Set(a.slice(1));
+  const restB = new Set(b.slice(1));
+
+  return (
+    [...restA].some((w) => restB.has(w)) || [...restB].some((w) => restA.has(w))
+  );
 }

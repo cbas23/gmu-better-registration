@@ -16,17 +16,17 @@ function extractScheduleTypeData(
   const text = td.textContent?.trim();
   if (!text) return null;
 
+  const part = text.split(" ")[0]; // used for hash
+
   let hash = 0;
-  for (let i = 0; i < text.length; i++) {
-    const char = text.charCodeAt(i);
+  for (let i = 0; i < part.length; i++) {
+    const char = part.charCodeAt(i);
     hash = (hash << 3) - hash + char;
     hash = hash & hash;
   }
 
-  const hue = Math.abs(hash) % 360;
+  const hue = (Math.abs(hash) % 18) * 20;
   const color = `hsl(${hue}, 50%, 40%)`;
-
-  console.log(`hash: ${text}, value: ${hue}`);
 
   return { text, color };
 }

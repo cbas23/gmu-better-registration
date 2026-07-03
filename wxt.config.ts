@@ -10,8 +10,13 @@ export default defineConfig({
     name: "GMU Better Registration",
     description: "Enhances GMU course registration with RateMyProfessors data",
     version: "0.2.0",
-    author: { email: "sebas.cardozo.scp@gmail.com" },
+    author: "sebas.cardozo.scp@gmail.com",
     host_permissions: ["https://www.ratemyprofessors.com/*"],
+    browser_specific_settings: {
+      gecko: {
+        id: "gmu-better-registration@cbas23",
+      },
+    },
   },
   webExt: {
     startUrls: ["https://patriotweb.gmu.edu/"],
