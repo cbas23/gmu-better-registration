@@ -8,6 +8,7 @@
 - [x] Refractor
 - [x] Fix for ALL tables
 - [ ] Custom sizes
+- [ ] Fix Tables resizing
 
 ## Maybe Ideas
 
