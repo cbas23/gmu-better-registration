@@ -18,6 +18,6 @@
 
 ## Later
 
-- [ ] Make good popup
+- [x] Make good popup
 - [ ] Nickname whitelist
 - [ ] Fix table resizing
