@@ -1,134 +1,159 @@
 # GMU Better Registration
 
-A Chrome and Firefox extension that enhances George Mason University's course registration page with RateMyProfessors data.
+A Chrome and Firefox extension that makes George Mason University's course-registration tables easier to scan and adds RateMyProfessors data directly beside each instructor.
 
-The extension runs on GMU's `StudentRegistrationSsb` course search pages, detects registration result tables, and overlays useful information directly into table cells. Instructor cells are enriched with RateMyProfessors ratings, difficulty, would-take-again percentage, rating counts, tooltips, and links to professor profiles.
+It runs on GMU's `StudentRegistrationSsb` pages, follows their dynamically rendered tables, and enhances course search, class search, registration history, and the default registration view.
 
 ## Features
 
-- Injects professor ratings into GMU registration search results.
-- Links instructors to matching RateMyProfessors profiles.
-- Shows hover tooltips with rating details.
-- Enhances multiple registration table columns using a reusable enhancer system.
-- Supports Chrome and Firefox through WXT.
-- Uses a background service worker to proxy RateMyProfessors GraphQL requests.
+- Shows each matched instructor's RateMyProfessors score inline, with a tooltip for difficulty, would-take-again percentage, rating count, and department.
+- Links matched instructors to their RMP profile and unmatched instructors to a prefilled RMP search.
+- Presents meeting days and times compactly, including asynchronous meetings, rotating multiple meeting records, and showing location/date details on hover.
+- Turns seat availability, waitlists, time conflicts, and linked sections into compact status indicators.
+- Condenses course attributes, section notes, and schedule types into readable labels and tooltips.
+- Restyles table headers, tightens row spacing, and highlights hovered rows.
+- Includes a custom extension popup and supports Chrome Manifest V3 and Firefox Manifest V2 builds through WXT.
 
-## Tech Stack
+## Tech stack
 
-- [WXT](https://wxt.dev/) for extension development and builds
-- [SolidJS](https://www.solidjs.com/) for injected UI
+- [WXT](https://wxt.dev/) for extension entrypoints, manifests, development, and packaging
+- [SolidJS](https://www.solidjs.com/) for popup and injected UI
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS v4](https://tailwindcss.com/)
-- [Zod](https://zod.dev/) for validating RateMyProfessors API responses
-- [Bun](https://bun.sh/) for package management and scripts
+- [Zod](https://zod.dev/) for RateMyProfessors response validation
+- [Bun](https://bun.sh/) for dependency management and scripts
 
-## Getting Started
+## Development
 
-Install dependencies:
+Prerequisites: install [Bun](https://bun.sh/) and a supported Chrome/Chromium browser or Firefox.
 
 ```sh
 bun install
 ```
 
-Start the Chrome development server:
+The install step also runs `wxt prepare`, which generates the `.wxt/` types and TypeScript configuration required by the project.
+
+Start a development browser with automatic extension reload:
 
 ```sh
 bun run dev
 ```
 
-Start the Firefox development server:
+For Firefox:
 
 ```sh
 bun run dev:firefox
 ```
 
-WXT will open the configured start URL, `https://patriotweb.gmu.edu/`, when the dev server starts.
+WXT opens `https://patriotweb.gmu.edu/` by default. Sign in and navigate to registration; the content script itself matches `*://ssbstureg.gmu.edu/StudentRegistrationSsb/*`.
 
-## Build
+## Validation and builds
 
-Build for Chrome:
+Type-check the project:
+
+```sh
+bun run compile
+```
+
+Create production builds:
 
 ```sh
 bun run build
-```
-
-Build for Firefox:
-
-```sh
 bun run build:firefox
 ```
 
-Build output is written to `.output/`.
+The unpacked builds are written to:
 
-Create distributable zip files:
+- Chrome: `.output/chrome-mv3/`
+- Firefox: `.output/firefox-mv2/`
+
+Create distributable archives with:
 
 ```sh
 bun run zip
 bun run zip:firefox
 ```
 
-## Type Checking
+There is currently no test runner, linter, formatter, or spell-check script configured.
 
-```sh
-bun run compile
-```
+## Manual installation
 
-The project does not currently have a test runner, linter, or formatter configured.
+After creating a production build:
 
-## Loading The Extension Manually
-
-After running a build, load the generated extension from `.output/`.
-
-For Chrome:
+### Chrome
 
 1. Open `chrome://extensions`.
-2. Enable Developer mode.
-3. Click Load unpacked.
-4. Select the Chrome build directory under `.output/`.
+2. Enable **Developer mode**.
+3. Select **Load unpacked**.
+4. Choose `.output/chrome-mv3/`.
 
-For Firefox:
+### Firefox
 
 1. Open `about:debugging#/runtime/this-firefox`.
-2. Click Load Temporary Add-on.
-3. Select the generated manifest file in the Firefox build directory under `.output/`.
+2. Select **Load Temporary Add-on**.
+3. Choose `.output/firefox-mv2/manifest.json`.
 
-## Project Structure
+Temporary Firefox add-ons must be loaded again after restarting Firefox.
+
+## How it works
 
 ```text
-src/
-  entrypoints/
-    background.ts       RateMyProfessors API message handler
-    content.ts          GMU registration page content script
-    popup/              Extension popup UI
-  enhancers/            Table column enhancers
-  utils/
-    enhanced-table.ts   Enhancer registry and table observer logic
-    overlay.ts          Cell overlay positioning
-    tooltip.tsx         SolidJS tooltip directive
-    names.ts            Professor name normalization and matching
-    rmp/                RateMyProfessors API client, schemas, and types
+GMU registration table
+        │
+        ▼
+content.ts observes new tables and rows
+        │
+        ▼
+EnhancedTable dispatches cells by xe-field
+        │
+        ├── meeting/status/attribute/note/schedule enhancers
+        │       └── SolidJS overlays and tooltips
+        │
+        └── instructor enhancer
+                │ runtime message
+                ▼
+          background.ts → RMP GraphQL API
+                │
+                ▼
+          Zod validation → normalized professor data
 ```
 
-## Enhancer System
+The background service worker owns RateMyProfessors network requests because the extension needs host access to `https://www.ratemyprofessors.com/*`. Professor matches are cached in the content-script context by the displayed instructor name.
 
-Enhancers are registered by `xe-field` value. Each enhancer inspects matching table cells, creates an overlay, and mounts a SolidJS component into that overlay.
+## Project structure
 
-To add a new enhancer:
+```text
+public/icon/                 Extension icons
+src/
+  assets/                   Popup and content-script Tailwind entrypoints
+  enhancers/                Self-registering table-cell enhancers
+  entrypoints/
+    background.ts           RateMyProfessors message handler
+    content.ts              GMU table discovery and observation
+    popup/                  Custom SolidJS extension popup
+  utils/
+    enhanced-table.ts       Enhancer registry and row processing
+    overlay.ts              Cell-overlay creation
+    tooltip.tsx             SolidJS tooltip directive
+    carousel.tsx            Vertical value carousel
+    names.ts                Instructor-name normalization and matching
+    rmp/                    GraphQL client, Zod schemas, normalization, types
+wxt.config.ts               WXT, manifest, browser, and Tailwind configuration
+```
 
-1. Create a file in `src/enhancers/`.
-2. Register it with `EnhancedTable.registerEnhancer("fieldName", enhancerFn)`.
-3. Import the file in `src/entrypoints/content.ts` for side effects.
+## Adding a table enhancer
 
-Example fields currently enhanced include `instructor`, `meetingTime`, `status`, `attribute`, `note`, `linked`, `add`, and `scheduleType`.
+Enhancers are registered by the GMU cell's `xe-field` attribute.
 
-## RateMyProfessors Integration
+1. Create `src/enhancers/your-field.tsx`.
+2. Register the enhancer at module scope with `EnhancedTable.registerEnhancer("fieldName", enhancerFn)`.
+3. Add a side-effect import to `src/entrypoints/content.ts`.
 
-The content script sends instructor names to the background service worker with the `rmp:searchProfessors` message. The background script normalizes names, queries RateMyProfessors for GMU professors, validates API responses with Zod, and returns normalized professor data.
+The registered fields are currently `instructor`, `meetingTime`, `status`, `attribute`, `note`, `linked`, `add`, and `scheduleType`.
 
-The RateMyProfessors auth token used by the project is a public token and is not treated as a secret.
+## Development notes
 
-## Notes
-
-- Generated directories such as `.wxt/` and `.output/` are ignored and should not be edited manually.
-- Root HTML files such as `registration.html`, `row.html`, and `example.html` are saved pages for offline DOM inspection, not build inputs.
-- Content-script Tailwind styles avoid preflight to prevent breaking GMU page styles.
+- Do not edit `.wxt/` or `.output/`; WXT regenerates both directories.
+- Content-script CSS imports Tailwind theme and utilities without preflight so it does not reset GMU's styles.
+- The RMP Basic auth value in the source is a public API token, not a project secret. API responses are validated with Zod before use.
+- `example.html` is a saved page used for offline DOM inspection, and `rpm-spec.md` is API reference material. Neither is part of the build.

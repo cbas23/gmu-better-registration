@@ -2,64 +2,92 @@
 
 ## Project
 
-Chrome/Firefox extension that injects RateMyProfessors data into GMU's course registration page. WXT + SolidJS + TypeScript + Tailwind CSS v4.
+Chrome/Firefox extension that improves George Mason University's registration tables and adds RateMyProfessors data. The stack is WXT, SolidJS, TypeScript, Tailwind CSS v4, Zod, and Bun.
 
 ## Commands
 
-- `bun install` — installs deps; postinstall runs `wxt prepare` (generates `.wxt/` which `tsconfig.json` extends)
-- `bun run dev` / `bun run dev:firefox` — dev server with auto-reload
-- `bun run build` / `bun run build:firefox` — production build → `.output/`
-- `bun run compile` — type-check only (`tsc --noEmit`). Requires `bun install` first
-- `bun run zip` / `bun run zip:firefox` — package extension
+- `bun install` — install dependencies; `postinstall` runs `wxt prepare` and generates `.wxt/`
+- `bun run dev` / `bun run dev:firefox` — start the Chrome/Firefox development build with auto-reload
+- `bun run build` / `bun run build:firefox` — create production builds in `.output/chrome-mv3/` or `.output/firefox-mv2/`
+- `bun run compile` — type-check with `tsc --noEmit`; run `bun install` first so `.wxt/tsconfig.json` exists
+- `bun run zip` / `bun run zip:firefox` — create distributable archives in `.output/`
 
-No tests, no linter, no formatter configured. There is a `cspell.json` for spell-checking.
+There is no test runner, linter, or formatter configured. `cspell.json` contains project-specific spelling exceptions but no spell-check script is defined.
 
 ## Architecture
 
-WXT manages manifest and entrypoints. Adding a file to `src/entrypoints/` auto-registers it in the manifest.
+WXT generates the extension manifest and discovers entrypoints from `src/entrypoints/`.
 
-**Entrypoints** (`src/entrypoints/`):
-- `background.ts` — service worker; listens for `rmp:searchProfessors` messages, proxies to RMP GraphQL API
-- `content.ts` — content script on `*://ssbstureg.gmu.edu/StudentRegistrationSsb/*`; finds `#tabs-classSearch`, observes tables for mutations, creates `EnhancedTable` instances
-- `popup/` — SolidJS popup (currently WXT boilerplate, not yet customized)
+### Entrypoints
 
-**Enhancer system** (the core pattern):
-- `src/utils/enhanced-table.ts` — `EnhancedTable` class; maintains a static registry of column enhancers keyed by `xe-field` attribute value
-- `src/enhancers/*.tsx` — each file self-registers at import time via `EnhancedTable.registerEnhancer("fieldName", fn)`. Content script imports them as side effects
-- Enhancers match table cells by the `xe-field` attribute (e.g., `"instructor"`, `"status"`, `"meetingTime"`)
-- Each enhancer creates an overlay div over the cell (`createOverlay` from `src/utils/overlay.ts`), then mounts a SolidJS component into it via `render()`
-- To add a new column enhancer: create `src/enhancers/your-field.tsx`, call `EnhancedTable.registerEnhancer("xe-field-value", fn)` at module level, import it in `content.ts`
+- `src/entrypoints/background.ts` — background service worker. It synchronously registers a raw `browser.runtime.onMessage` listener, handles `rmp:searchProfessors`, normalizes the requested name, queries up to 10 GMU professors, and replies asynchronously. Failures return `null`.
+- `src/entrypoints/content.ts` — content script for `*://ssbstureg.gmu.edu/StudentRegistrationSsb/*`. It imports every enhancer for registration side effects, selects the table container for the current path, waits for dynamically rendered containers/tables with `MutationObserver`, and starts one `EnhancedTable` per table.
+- `src/entrypoints/popup/` — custom SolidJS promotional popup. `App.tsx` contains its copy and links, `style.css` contains most popup styling, and `index.html` also imports the shared full Tailwind stylesheet.
 
-**RMP API client** (`src/utils/rmp/`):
-- `api.ts` — GraphQL queries, `rmpQuery` helper with Zod validation
-- `schemas.ts` — Zod response schemas
-- `normalize.ts` — transforms API nodes into normalized interfaces
-- `types.ts` — TypeScript interfaces
-- `index.ts` — re-exports everything
-- Auth token (`dGVzdDp0ZXN0`) is a public hardcoded token, not a secret
-- GMU school legacy ID: `352` (exported as `GMU_SCHOOL_LEGACY_ID`)
+The content script maps registration views to these container IDs:
 
-**Utilities** (`src/utils/`):
-- `names.ts` — professor name normalization and fuzzy matching (search words ⊆ RMP name words)
-- `overlay.ts` — creates positioned overlay divs over table cells
-- `tooltip.tsx` — custom SolidJS `use:tooltip` directive; renders tooltips in `document.body` with fixed positioning
-- `carousel.tsx` — vertical carousel helper (unused)
+- default: `tabs-classSearch`
+- paths containing `classSearch`: `searchResultsParent`
+- paths containing `registrationHistory`: `lookupScheduleTable`
+- paths containing `courseSearch`: `searchResults`
 
-**Tailwind in content script**: `src/assets/tailwind-content.css` imports only theme + utilities (no preflight) to avoid breaking the host page's styles.
+### Enhancer system
+
+- `src/utils/enhanced-table.ts` owns the static enhancer registry keyed by the cell's `xe-field` value.
+- Each `src/enhancers/*.tsx` module registers itself at module evaluation time with `EnhancedTable.registerEnhancer(key, fn)`.
+- `EnhancedTable` styles headers, compacts cell padding, marks processed rows with `data-rmp-enhanced`, and reprocesses newly inserted rows after table mutations.
+- UI enhancers call `createOverlay()` from `src/utils/overlay.ts` and mount a SolidJS component with `render()`. `createOverlay()` returns `null` if the cell already contains one.
+- `src/utils/tooltip.tsx` implements the `use:tooltip` Solid directive and portals a single active fixed-position tooltip into `document.body`.
+- `src/utils/carousel.tsx` rotates multiple meeting or attribute values vertically every three seconds by default.
+
+Registered `xe-field` keys:
+
+- `instructor` — searches RMP through the background worker, caches matches by displayed name, shows the rating and detail tooltip, and links to the professor or a prefilled RMP search
+- `meetingTime` — parses days, time, location, date, and type; presents multiple meetings in a carousel and tooltip
+- `status` — displays seat and waitlist counts plus time-conflict and linked-section indicators
+- `attribute` — displays course attributes in a carousel and tooltip
+- `note` — replaces section-note text with an icon and tooltip
+- `scheduleType` — displays a deterministic color-coded schedule-type label
+- `add` — removes the host tooltip and normalizes the cell height/padding
+- `linked` — removes the host tooltip
+
+To add an enhancer, create `src/enhancers/your-field.tsx`, register the exact `xe-field` key at module scope, and add a side-effect import in `src/entrypoints/content.ts`.
+
+### RateMyProfessors client
+
+`src/utils/rmp/` contains a reusable GraphQL client beyond the professor-search call currently used by the extension:
+
+- `api.ts` — Relay ID helpers, GraphQL operations, pagination helpers, and `RmpError`
+- `schemas.ts` — Zod schemas for GraphQL envelopes and nodes
+- `normalize.ts` — converts API nodes to the public snake_case interfaces
+- `types.ts` — normalized domain and option types
+- `index.ts` — public exports
+
+Every RMP response is structurally validated with Zod. The hard-coded Basic auth value (`dGVzdDp0ZXN0`) is a public RMP token, not a project secret. GMU's legacy school ID is `352`; use the exported `GMU_SCHOOL_LEGACY_ID` and Relay ID helpers rather than duplicating it.
+
+### Styling and assets
+
+- `src/assets/tailwind-content.css` imports only Tailwind theme and utilities, intentionally excluding preflight so the content script does not reset GMU's page styles. It also defines table hover behavior.
+- `src/assets/tailwind.css` imports full Tailwind and is used by the popup.
+- `public/icon/` contains the extension SVG and PNG icon variants. Root `public/icon.svg`, `public/wxt.svg`, and `src/assets/solid.svg` are legacy/template assets and are not referenced by current source.
 
 ## Conventions
 
-- SolidJS JSX, not React — `tsconfig.json` uses `"jsx": "preserve"` + `"jsxImportSource": "solid-js"`
-- Path alias `@/` → `src/`
-- All RMP API responses validated with Zod before use
-- `wxt.config.ts` sets `host_permissions` for `https://www.ratemyprofessors.com/*`
-- WXT `webExt.startUrls` is `https://patriotweb.gmu.edu/` (opens on dev start)
+- Use SolidJS semantics, not React semantics. Components execute once, signals are called as functions, and reactive props should not be destructured at component scope.
+- JSX is configured with `"jsx": "preserve"` and `"jsxImportSource": "solid-js"`.
+- Prefer the `@/` alias for imports from `src/`.
+- Keep WXT entrypoint runtime code inside `main`/entrypoint callbacks and register background listeners synchronously.
+- Use the cross-browser `browser` API supplied by WXT rather than `chrome`.
+- Preserve the enhancer registration pattern and exact `xe-field` casing (for example, `meetingTime` and `scheduleType`).
+- Keep RMP requests in the background entrypoint; content scripts should use extension messaging rather than calling RMP directly.
+- Continue validating new RMP operations with Zod before normalizing or returning data.
+- Avoid Tailwind preflight in the content script.
 
 ## Gotchas
 
-- `.wxt/` and `.output/` are gitignored and auto-generated — never edit manually
-- `.wxt/` must exist before `tsc` works — always `bun install` first
-- `src/components/` exists but is empty; all UI components live inside enhancer files or `src/utils/`
-- The popup (`src/entrypoints/popup/`) is still default WXT template boilerplate
-- Root files `registration.html`, `row.html`, `example.html` are saved HTML for offline DOM inspection — not part of the build
-- `rpm-spec.md` is RMP GraphQL API reference docs — not source code
+- `.wxt/` and `.output/` are generated and gitignored; never edit them manually.
+- The extension version comes from `wxt.config.ts` (`0.2.2` currently), while `package.json` currently says `0.2.1`. Keep both aligned when releasing.
+- The popup's `REPOSITORY_URL` is currently the placeholder `https://github.com/cbas23/REPOSITORY`.
+- `src/components/` is empty; current UI lives in enhancer modules, popup files, or `src/utils/`.
+- `example.html` is a saved registration-page fixture for offline DOM inspection, not a build input. `rpm-spec.md` is RMP GraphQL reference material, not source code.
+- `TODO.md` is intentionally gitignored even though an older copy remains tracked.
