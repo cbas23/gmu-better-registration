@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 128 128"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   sodipodi:docname="b.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="true"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="false"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showborder="false"
+     borderlayer="true"
+     labelstyle="default"
+     showgrid="true"
+     inkscape:zoom="3.2890625"
+     inkscape:cx="38.916865"
+     inkscape:cy="77.225653"
+     inkscape:window-width="1920"
+     inkscape:window-height="1080"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       id="grid1"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="8"
+       spacingy="8"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="4"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient10"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#ffc933;stop-opacity:1;"
+         offset="0"
+         id="stop10" />
+      <stop
+         style="stop-color:#f0af18;stop-opacity:1;"
+         offset="1"
+         id="stop11" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient6"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#006630;stop-opacity:1;"
+         offset="0"
+         id="stop6" />
+      <stop
+         style="stop-color:#003822;stop-opacity:1;"
+         offset="1"
+         id="stop7" />
+    </linearGradient>
+    <rect
+       x="16"
+       y="-16"
+       width="104.73199"
+       height="107.03848"
+       id="rect4" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6"
+       id="linearGradient7"
+       x1="63.999985"
+       y1="8.1062317e-06"
+       x2="63.999985"
+       y2="127.99998"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient10"
+       id="linearGradient11"
+       x1="64"
+       y1="104"
+       x2="64"
+       y2="32"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:url(#linearGradient7);fill-opacity:1"
+       id="rect1"
+       width="127.99998"
+       height="127.99999"
+       x="0"
+       y="0"
+       ry="24"
+       rx="24" />
+    <text
+       xml:space="preserve"
+       id="text4"
+       style="font-size:32px;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect4);display:none;fill:#004a25;fill-opacity:1"
+       transform="matrix(2.0601862,-0.0850356,0.03862098,4.536114,-29.301564,60.609477)"><tspan
+         x="16"
+         y="13.116006"
+         id="tspan2"><tspan
+           style="font-weight:bold;font-family:JetbrainsMono;-inkscape-font-specification:'JetbrainsMono Bold'"
+           id="tspan1">GBR</tspan></tspan></text>
+    <path
+       style="display:none;fill:#00331a;fill-opacity:1"
+       d="M 108,32 H 60 L 36,72 h 24 l -8,48 56,-48 H 84 Z"
+       id="path3-3"
+       sodipodi:nodetypes="cccccccc" />
+    <path
+       style="fill:url(#linearGradient11);fill-opacity:1;stroke:none;stroke-opacity:1"
+       d="M 100,23.999996 H 52 l -24,40 H 52 L 44,112 100,63.999996 H 76 Z"
+       id="path3"
+       sodipodi:nodetypes="cccccccc" />
+  </g>
+</svg>
