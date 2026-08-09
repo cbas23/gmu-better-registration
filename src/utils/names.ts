@@ -27,7 +27,7 @@ export function matchProfessorName(
   const a = splitTableProf(tableProfName.trim()).map((w) => w.toLowerCase());
   const b = splitRMPProf(rmpProfName.trim()).map((w) => w.toLowerCase());
 
-  console.log("comp prof: ", a, b);
+  // console.log("comp prof: ", a, b);
 
   if (a.length === 0 || b.length === 0) return false;
   if (a[0] !== b[0]) return false;

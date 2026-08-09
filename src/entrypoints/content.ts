@@ -17,7 +17,7 @@ export default defineContentScript({
 const observedTables = new WeakSet<HTMLTableElement>();
 
 function main() {
-  console.log("Current page URL:", window.location.href);
+  // console.log("Current page URL:", window.location.href);
   let tableContainerNameID = "tabs-classSearch";
 
   if (window.location.pathname.includes("classSearch")) {
