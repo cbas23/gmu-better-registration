@@ -3,6 +3,9 @@ export {
   teacherNodeId,
   GMU_SCHOOL_LEGACY_ID,
   GMU_SCHOOL_RELAY_ID,
+} from "./ids";
+
+export {
   RmpError,
   searchSchools,
   searchProfessors,

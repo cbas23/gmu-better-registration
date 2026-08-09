@@ -6,20 +6,25 @@ export default defineConfig({
   modules: ["@wxt-dev/module-solid"],
   srcDir: "src",
 
-  manifest: {
+  manifest: ({ browser }) => ({
     name: "GMU Better Registration",
     description: "Enhances GMU course registration with RateMyProfessors data",
-    version: "0.2.2",
-    author: {
-      email: "sebas.cardozo.scp@gmail.com",
-    },
     host_permissions: ["https://www.ratemyprofessors.com/*"],
-    browser_specific_settings: {
-      gecko: {
-        id: "gmu-better-registration@cbas23",
+    ...(browser === "firefox" && {
+      browser_specific_settings: {
+        gecko: {
+          id: "gmu-better-registration@cbas23",
+          strict_min_version: "140.0",
+          data_collection_permissions: {
+            required: ["websiteContent"],
+          },
+        },
+        gecko_android: {
+          strict_min_version: "142.0",
+        },
       },
-    },
-  },
+    }),
+  }),
   webExt: {
     startUrls: ["https://patriotweb.gmu.edu/"],
   },

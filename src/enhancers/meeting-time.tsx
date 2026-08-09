@@ -110,22 +110,21 @@ function extractMeetingTimeData(
   return meetings.length > 0 ? { meetings } : null;
 }
 
-const ALL_DAYS = ["S", "M", "T", "W", "T", "F", "S"] as const;
-const ALL_DAY_NAMES = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
+const ALL_DAYS = [
+  { abbreviation: "S", name: "Sunday" },
+  { abbreviation: "M", name: "Monday" },
+  { abbreviation: "T", name: "Tuesday" },
+  { abbreviation: "W", name: "Wednesday" },
+  { abbreviation: "T", name: "Thursday" },
+  { abbreviation: "F", name: "Friday" },
+  { abbreviation: "S", name: "Saturday" },
 ] as const;
 
 function DayPillbox(props: { days: string[] }): JSX.Element {
   return (
     <span class="inline-flex rounded-xs overflow-hidden border border-gray-700 shrink-0">
-      {ALL_DAYS.map((abbr, i) => {
-        const active = props.days.includes(ALL_DAY_NAMES[i]);
+      {ALL_DAYS.map(({ abbreviation, name }) => {
+        const active = props.days.includes(name);
         return (
           <span
             class="w-3.5 h-3.5 flex items-center justify-center text-[12px] font-mono leading-none border-r border-gray-700 last:border-r-0 pt-px"
@@ -134,7 +133,7 @@ function DayPillbox(props: { days: string[] }): JSX.Element {
               color: active ? "#fff" : "#364153",
             }}
           >
-            {abbr}
+            {abbreviation}
           </span>
         );
       })}

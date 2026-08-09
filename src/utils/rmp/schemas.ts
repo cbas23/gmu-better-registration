@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+// Extension CSPs disallow runtime code generation; keep Zod on its interpreter path.
+z.config({ jitless: true });
+
 export const RmpGraphQLErrorSchema = z.object({
   message: z.string(),
   extensions: z.unknown().optional(),

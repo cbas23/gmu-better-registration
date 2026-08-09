@@ -1,7 +1,7 @@
 import { createSignal, Match, onMount, Show, Switch, type JSX } from "solid-js";
 import { render } from "solid-js/web";
 import type { Professor } from "@/utils/rmp";
-import { schoolNodeId, GMU_SCHOOL_LEGACY_ID } from "@/utils/rmp";
+import { schoolNodeId, GMU_SCHOOL_LEGACY_ID } from "@/utils/rmp/ids";
 import { createOverlay } from "@/utils/overlay";
 import { tooltip } from "@/utils/tooltip";
 import { matchProfessorName } from "@/utils/names";

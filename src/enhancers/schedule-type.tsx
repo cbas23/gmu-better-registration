@@ -16,7 +16,7 @@ function extractScheduleTypeData(
   const text = td.textContent?.trim();
   if (!text) return null;
 
-  const part = text.split(" ")[0]; // used for hash
+  const part = text.split(" ", 1)[0] ?? text; // used for hash
 
   let hash = 0;
   for (let i = 0; i < part.length; i++) {

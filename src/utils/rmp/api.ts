@@ -12,6 +12,7 @@ import {
   normalizeRatingNode,
   normalizeSchoolRatingNode,
 } from "./normalize";
+import { schoolNodeId, teacherNodeId } from "./ids";
 import type {
   SchoolSearchResult,
   ProfessorSearchResult,
@@ -27,17 +28,6 @@ import type {
 
 const RMP_API_URL = "https://www.ratemyprofessors.com/graphql";
 const RMP_AUTH_TOKEN = "dGVzdDp0ZXN0";
-
-export const GMU_SCHOOL_LEGACY_ID = 352;
-export const GMU_SCHOOL_RELAY_ID = schoolNodeId(GMU_SCHOOL_LEGACY_ID);
-
-export function schoolNodeId(legacyId: number): string {
-  return btoa(`School-${legacyId}`);
-}
-
-export function teacherNodeId(legacyId: number): string {
-  return btoa(`Teacher-${legacyId}`);
-}
 
 export class RmpError extends Error {
   constructor(

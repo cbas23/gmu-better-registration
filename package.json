@@ -2,7 +2,7 @@
   "name": "gmu-better-registration",
   "description": "Enhances GMU course registration with RateMyProfessors data",
   "private": true,
-  "version": "0.2.1",
+  "version": "0.2.3",
   "author": "cbas23",
   "type": "module",
   "scripts": {
@@ -24,6 +24,7 @@
     "@wxt-dev/module-solid": "^1.1.4",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
-    "wxt": "^0.20.25"
+    "web-ext": "^10.6.0",
+    "wxt": "^0.21.3"
   }
 }
