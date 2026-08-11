@@ -86,7 +86,7 @@ Every RMP response is structurally validated with Zod. The hard-coded Basic auth
 ## Gotchas
 
 - `.wxt/` and `.output/` are generated and gitignored; never edit them manually.
-- The extension version comes from `package.json` (`0.2.3` currently); WXT uses it for generated manifests and archive names.
+- The extension version comes from `package.json`; WXT uses it for generated manifests and archive names.
 - The popup's `REPOSITORY_URL` is currently the placeholder `https://github.com/cbas23/REPOSITORY`.
 - `src/components/` is empty; current UI lives in enhancer modules, popup files, or `src/utils/`.
 - `example.html` is a saved registration-page fixture for offline DOM inspection, not a build input. `rpm-spec.md` is RMP GraphQL reference material, not source code.

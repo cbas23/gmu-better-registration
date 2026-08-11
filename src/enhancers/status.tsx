@@ -115,8 +115,25 @@ function StatusOverlay(props: StatusData): JSX.Element {
       </div>
       <div class="flex items-center gap-1 ml-auto">
         {props.isLinked && (
-          <span class="bg-sky-600 text-white font-mono font-bold py-0.5 px-1 text-md rounded-sm">
-            L
+          <span
+            class="bg-sky-600 text-white p-0.5 rounded-sm"
+            role="img"
+            aria-label="Linked section"
+          >
+            <svg
+              class="h-3 w-3 flex"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+              />
+            </svg>
           </span>
         )}
       </div>
