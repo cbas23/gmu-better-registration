@@ -49,8 +49,10 @@ export class EnhancedTable {
 
       const tds = tr.querySelectorAll("td");
       tds.forEach((td) => {
-        td.style.setProperty("padding", "2px");
+        td.style.setProperty("padding", "0px");
         td.style.setProperty("padding-left", "8px");
+        td.style.setProperty("border-right", "0px", "important");
+        td.style.setProperty("height", "32px", "important");
       });
 
       tds.forEach((td) => {

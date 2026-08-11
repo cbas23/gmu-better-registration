@@ -3,14 +3,13 @@ import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { tooltip } from "@/utils/tooltip";
 import { removeTooltip, clearTitle } from "@/utils/utils";
-import { EnhancedTable } from "../utils/enhanced-table";
 
-interface TextData {
+interface Data {
   text: string;
   lines: string[];
 }
 
-function extractNoteData(td: HTMLTableCellElement): TextData | null {
+function extractData(td: HTMLTableCellElement): Data | null {
   // class="gmu-section-note"
   const note = td.querySelector<HTMLSpanElement>(".gmu-section-note");
   if (!note) return null;
@@ -23,7 +22,7 @@ function extractNoteData(td: HTMLTableCellElement): TextData | null {
   return { text: noteText ?? "", lines: noteText?.split("<br>") ?? [] };
 }
 
-function NoteOverlay(props: TextData): JSX.Element {
+function overlay(props: Data): JSX.Element {
   const tooltipContent = (
     <div class="flex flex-col bg-white border border-gray-400 p-2">
       {props.lines.map((line) => (
@@ -55,13 +54,11 @@ function NoteOverlay(props: TextData): JSX.Element {
   );
 }
 
-function enhanceNote(td: HTMLTableCellElement): void {
-  const data = extractNoteData(td);
+export default function enhancer(td: HTMLTableCellElement): void {
+  const data = extractData(td);
   if (!data) return;
 
-  const overlay = createOverlay(td);
-  if (!overlay) return;
-  render(() => <NoteOverlay {...data} />, overlay);
+  const container = createOverlay(td);
+  if (!container) return;
+  render(() => overlay(data), container);
 }
-
-EnhancedTable.registerEnhancer("note", enhanceNote);

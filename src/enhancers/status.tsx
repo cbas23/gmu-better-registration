@@ -3,9 +3,8 @@ import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { tooltip } from "@/utils/tooltip";
 import { removeTooltip, clearTitle } from "@/utils/utils";
-import { EnhancedTable } from "../utils/enhanced-table";
 
-interface StatusData {
+interface Data {
   seats: number;
   seatsLeft: number;
   waitList: number;
@@ -14,7 +13,7 @@ interface StatusData {
   isLinked: boolean;
 }
 
-function extractStatusData(td: HTMLTableCellElement): StatusData | null {
+function extractData(td: HTMLTableCellElement): Data | null {
   removeTooltip(td);
 
   const brElements = td.querySelectorAll("br");
@@ -63,7 +62,7 @@ function extractStatusData(td: HTMLTableCellElement): StatusData | null {
   };
 }
 
-function StatusOverlay(props: StatusData): JSX.Element {
+function overlay(props: Data): JSX.Element {
   const full = props.seatsLeft === 0;
   const tooltipContent = (
     <div class="flex flex-col bg-white border border-gray-400 p-2 gap-1 text-xs text-gray-800">
@@ -141,13 +140,11 @@ function StatusOverlay(props: StatusData): JSX.Element {
   );
 }
 
-function enhanceStatus(td: HTMLTableCellElement): void {
-  const data = extractStatusData(td);
+export default function enhancer(td: HTMLTableCellElement): void {
+  const data = extractData(td);
   if (!data) return;
 
-  const overlay = createOverlay(td);
-  if (!overlay) return;
-  render(() => <StatusOverlay {...data} />, overlay);
+  const container = createOverlay(td);
+  if (!container) return;
+  render(() => overlay(data), container);
 }
-
-EnhancedTable.registerEnhancer("status", enhanceStatus);

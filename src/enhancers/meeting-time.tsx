@@ -2,10 +2,9 @@ import type { JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { Carousel } from "@/utils/carousel";
-import { EnhancedTable } from "../utils/enhanced-table";
 import { tooltip } from "@/utils/tooltip";
 
-interface MeetingInfo {
+interface Info {
   days: string[];
   startTime: string;
   endTime: string;
@@ -17,8 +16,8 @@ interface MeetingInfo {
   schedule: string;
 }
 
-interface MeetingTimeData {
-  meetings: MeetingInfo[];
+interface Data {
+  meetings: Info[];
 }
 
 function parseDays(scheduleEl: Element): string[] {
@@ -69,15 +68,13 @@ function parseTooltipRows(meetingEl: Element): Record<string, string> {
   return result;
 }
 
-function extractMeetingTimeData(
-  td: HTMLTableCellElement,
-): MeetingTimeData | null {
+function extractData(td: HTMLTableCellElement): Data | null {
   const meetingEls = td.querySelectorAll(".meeting");
   if (meetingEls.length === 0) return null;
 
   removeTooltip(td);
 
-  const meetings: MeetingInfo[] = [];
+  const meetings: Info[] = [];
   for (const el of meetingEls) {
     const scheduleEl = el.querySelector(".meeting-schedule");
     if (!scheduleEl) continue;
@@ -141,7 +138,7 @@ function DayPillbox(props: { days: string[] }): JSX.Element {
   );
 }
 
-function MeetingTooltip(props: MeetingTimeData): JSX.Element {
+function Tooltip(props: Data): JSX.Element {
   const cols =
     props.meetings.length <= 4 ? 1 : props.meetings.length <= 8 ? 2 : 3;
 
@@ -216,8 +213,8 @@ function MeetingTooltip(props: MeetingTimeData): JSX.Element {
   );
 }
 
-function MeetingCarouselWrapper(props: {
-  meetings: MeetingInfo[];
+function CarouselWrapper(props: {
+  meetings: Info[];
   children: JSX.Element;
 }): JSX.Element {
   if (props.meetings.length <= 1) {
@@ -226,16 +223,16 @@ function MeetingCarouselWrapper(props: {
   return <Carousel>{props.children}</Carousel>;
 }
 
-function MeetingTimeOverlay(props: MeetingTimeData): JSX.Element {
+function overlay(props: Data): JSX.Element {
   return (
     <div
       class="pointer-events-auto absolute inset-0 flex flex-col justify-center gap-0.5 px-1 cursor-default"
       use:tooltip={{
-        content: <MeetingTooltip {...props} />,
+        content: <Tooltip {...props} />,
         position: "left",
       }}
     >
-      <MeetingCarouselWrapper meetings={props.meetings}>
+      <CarouselWrapper meetings={props.meetings}>
         {props.meetings.map((m) =>
           m.startTime ? (
             <div class="w-full h-full flex items-center gap-2 px-1">
@@ -251,26 +248,24 @@ function MeetingTimeOverlay(props: MeetingTimeData): JSX.Element {
             </div>
           ),
         )}
-      </MeetingCarouselWrapper>
+      </CarouselWrapper>
     </div>
   );
 }
 
-function enhanceMeetingTime(td: HTMLTableCellElement): void {
-  const data = extractMeetingTimeData(td);
+export default function enhancer(td: HTMLTableCellElement): void {
+  const data = extractData(td);
   if (!data) return;
 
-  const overlay = createOverlay(td);
-  if (!overlay) return;
-  overlay.style.position = "absolute";
-  overlay.style.inset = "0";
-  overlay.style.zIndex = "10";
+  const container = createOverlay(td);
+  if (!container) return;
+  container.style.position = "absolute";
+  container.style.inset = "0";
+  container.style.zIndex = "10";
 
-  render(() => <MeetingTimeOverlay {...data} />, overlay);
+  render(() => overlay(data), container);
 
   for (const el of td.querySelectorAll(".meeting, .accordion")) {
     (el as HTMLElement).style.display = "none";
   }
 }
-
-EnhancedTable.registerEnhancer("meetingTime", enhanceMeetingTime);

@@ -1,16 +1,13 @@
 import { render } from "solid-js/web";
 import { createOverlay } from "@/utils/overlay";
 import { removeTooltip } from "@/utils/utils";
-import { EnhancedTable } from "../utils/enhanced-table";
 
-interface ScheduleTypeData {
+interface Data {
   text: string;
   color: string;
 }
 
-function extractScheduleTypeData(
-  td: HTMLTableCellElement,
-): ScheduleTypeData | null {
+function extractData(td: HTMLTableCellElement): Data | null {
   removeTooltip(td);
 
   const text = td.textContent?.trim();
@@ -31,7 +28,7 @@ function extractScheduleTypeData(
   return { text, color };
 }
 
-function ScheduleTypeOverlay(props: ScheduleTypeData) {
+function overlay(props: Data) {
   return (
     <div class="absolute inset-0 flex items-center px-2 pointer-events-auto">
       <span
@@ -44,13 +41,11 @@ function ScheduleTypeOverlay(props: ScheduleTypeData) {
   );
 }
 
-function enhanceScheduleType(td: HTMLTableCellElement): void {
-  const data = extractScheduleTypeData(td);
+export default function enhancer(td: HTMLTableCellElement): void {
+  const data = extractData(td);
   if (!data) return;
 
-  const overlay = createOverlay(td);
-  if (!overlay) return;
-  render(() => <ScheduleTypeOverlay {...data} />, overlay);
+  const container = createOverlay(td);
+  if (!container) return;
+  render(() => overlay(data), container);
 }
-
-EnhancedTable.registerEnhancer("scheduleType", enhanceScheduleType);

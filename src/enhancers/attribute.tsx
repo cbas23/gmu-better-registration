@@ -4,7 +4,6 @@ import { createOverlay } from "@/utils/overlay";
 import { Carousel } from "@/utils/carousel";
 import { removeTooltip } from "@/utils/utils";
 import { tooltip } from "@/utils/tooltip";
-import { EnhancedTable } from "../utils/enhanced-table";
 
 const PILL_COLORS = [
   "bg-red-200",
@@ -17,11 +16,11 @@ const PILL_COLORS = [
   "bg-pink-200",
 ];
 
-interface AttributeData {
+interface Data {
   attributes: string[];
 }
 
-function extractAttributeData(td: HTMLTableCellElement): AttributeData | null {
+function extractData(td: HTMLTableCellElement): Data | null {
   const spans = td.querySelectorAll("span");
 
   td.setAttribute("data-id", "0");
@@ -40,7 +39,7 @@ function extractAttributeData(td: HTMLTableCellElement): AttributeData | null {
   return attributes.length > 0 ? { attributes } : null;
 }
 
-function AttributeOverlay(props: AttributeData): JSX.Element {
+function overlay(props: Data): JSX.Element {
   const tooltipContent = (
     <div class="flex flex-col border border-gray-400 bg-white p-2 gap-2">
       <span class="font-bold">Attributes:</span>
@@ -70,13 +69,11 @@ function AttributeOverlay(props: AttributeData): JSX.Element {
   );
 }
 
-function enhanceAttribute(td: HTMLTableCellElement): void {
-  const data = extractAttributeData(td);
+export default function enhancer(td: HTMLTableCellElement): void {
+  const data = extractData(td);
   if (!data) return;
 
-  const overlay = createOverlay(td);
-  if (!overlay) return;
-  render(() => <AttributeOverlay {...data} />, overlay);
+  const container = createOverlay(td);
+  if (!container) return;
+  render(() => overlay(data), container);
 }
-
-EnhancedTable.registerEnhancer("attribute", enhanceAttribute);

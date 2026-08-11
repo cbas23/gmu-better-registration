@@ -5,7 +5,6 @@ import { schoolNodeId, GMU_SCHOOL_LEGACY_ID } from "@/utils/rmp/ids";
 import { createOverlay } from "@/utils/overlay";
 import { tooltip } from "@/utils/tooltip";
 import { matchProfessorName } from "@/utils/names";
-import { EnhancedTable } from "../utils/enhanced-table";
 
 const professorCache = new Map<string, Professor | null>();
 
@@ -51,13 +50,11 @@ function takeAgainColor(percent: number): string {
   return "#c43340";
 }
 
-interface InstructorData {
+interface Data {
   profName: string;
 }
 
-function extractInstructorData(
-  td: HTMLTableCellElement,
-): InstructorData | null {
+function extractData(td: HTMLTableCellElement): Data | null {
   const profLink = td.querySelector("a");
   const profName = profLink?.textContent
     ?.trim()
@@ -68,7 +65,7 @@ function extractInstructorData(
   return { profName };
 }
 
-function ProfTooltip(props: { prof: Professor }): JSX.Element {
+function Tooltip(props: { prof: Professor }): JSX.Element {
   const p = props.prof;
   return (
     <div class="flex flex-col bg-white border border-gray-400 p-3 gap-2 min-w-45">
@@ -135,7 +132,7 @@ function ProfTooltip(props: { prof: Professor }): JSX.Element {
   );
 }
 
-function NullProfTooltip(props: { profName: string }): JSX.Element {
+function NullTooltip(props: { profName: string }): JSX.Element {
   return (
     <div class="flex flex-col bg-white border border-gray-400 p-3 gap-1 min-w-45">
       <span class="font-bold text-sm">{props.profName}</span>
@@ -146,7 +143,7 @@ function NullProfTooltip(props: { profName: string }): JSX.Element {
   );
 }
 
-function InstructorOverlay(props: InstructorData): JSX.Element {
+function overlay(props: Data): JSX.Element {
   const [prof, setProf] = createSignal<Professor | null | undefined>(undefined);
 
   onMount(async () => {
@@ -184,7 +181,7 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
         <div
           class="pointer-events-auto flex items-center gap-1.5 w-full h-full cursor-pointer"
           use:tooltip={{
-            content: <NullProfTooltip profName={props.profName} />,
+            content: <NullTooltip profName={props.profName} />,
             position: "left",
           }}
         >
@@ -194,7 +191,7 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
             rel="noopener noreferrer"
             class="flex items-center gap-1.5 w-full h-full no-underline"
           >
-            <span class="font-mono font-bold text-[11px] leading-none flex items-center justify-center h-full w-8 bg-gray-100 text-gray-400">
+            <span class="font-mono font-bold text-[11px] leading-none flex items-center justify-center h-full w-8 bg-gray-100 text-gray-400 min-w-8">
               N/A
             </span>
             <span class="text-[11px] text-gray-400 truncate">
@@ -208,7 +205,7 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
           <div
             class="pointer-events-auto flex items-center gap-1.5 w-full h-full cursor-pointer"
             use:tooltip={{
-              content: <ProfTooltip prof={p()} />,
+              content: <Tooltip prof={p()} />,
               position: "left",
             }}
           >
@@ -219,7 +216,7 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
               class="flex items-center gap-1.5 w-full h-full no-underline"
             >
               <span
-                class="font-mono font-bold text-[12px] leading-none flex items-center justify-center h-full w-8"
+                class="font-mono font-bold text-[12px] leading-none flex items-center justify-center h-full w-8 min-w-8"
                 style={{
                   color: ratingColor(p().overall_rating!),
                   "background-color": ratingBgColor(p().overall_rating!),
@@ -238,17 +235,15 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
   );
 }
 
-function enhanceInstructor(td: HTMLTableCellElement): void {
-  const data = extractInstructorData(td);
+export default function enhancer(td: HTMLTableCellElement): void {
+  const data = extractData(td);
   if (!data) return;
   td.dataset.rmpEnhanced = "pending";
 
-  const overlay = createOverlay(td);
-  if (!overlay) return;
-  overlay.style.display = "flex";
-  overlay.style.alignItems = "stretch";
+  const container = createOverlay(td);
+  if (!container) return;
+  container.style.display = "flex";
+  container.style.alignItems = "stretch";
 
-  render(() => <InstructorOverlay {...data} />, overlay);
+  render(() => overlay(data), container);
 }
-
-EnhancedTable.registerEnhancer("instructor", enhanceInstructor);
