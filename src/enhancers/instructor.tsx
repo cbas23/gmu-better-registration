@@ -116,7 +116,9 @@ function ProfTooltip(props: { prof: Professor }): JSX.Element {
                 class="font-bold"
                 style={{ color: takeAgainColor(p.percent_take_again!) }}
               >
-                {p.percent_take_again === -1 ? "-" : p.percent_take_again!.toFixed(0)}
+                {p.percent_take_again === -1
+                  ? "-"
+                  : p.percent_take_again!.toFixed(0)}
               </span>
               <span class="text-gray-500">%</span>
             </span>
@@ -192,7 +194,7 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
             rel="noopener noreferrer"
             class="flex items-center gap-1.5 w-full h-full no-underline"
           >
-            <span class="font-mono font-bold text-[11px] leading-none flex items-center justify-center aspect-square h-8 bg-gray-100 text-gray-400">
+            <span class="font-mono font-bold text-[11px] leading-none flex items-center justify-center h-full w-8 bg-gray-100 text-gray-400">
               N/A
             </span>
             <span class="text-[11px] text-gray-400 truncate">
@@ -217,7 +219,7 @@ function InstructorOverlay(props: InstructorData): JSX.Element {
               class="flex items-center gap-1.5 w-full h-full no-underline"
             >
               <span
-                class="font-mono font-bold text-[12px] leading-none flex items-center justify-center aspect-square h-8"
+                class="font-mono font-bold text-[12px] leading-none flex items-center justify-center h-full w-8"
                 style={{
                   color: ratingColor(p().overall_rating!),
                   "background-color": ratingBgColor(p().overall_rating!),
