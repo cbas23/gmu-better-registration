@@ -20,3 +20,21 @@ table tbody tr:hover [data-custom-overlay] {
 table tbody tr.selected [data-custom-overlay] {
   background-color: rgb(248, 248, 248) !important;
 }
+
+.footable-row-detail-value > [data-custom-overlay] {
+  display: none;
+}
+
+.footable-row-detail-row {
+  display: flex;
+  flex-direction: row;
+
+  & > .footable-row-detail-name {
+    min-width: 128px;
+    font-weight: bold;
+  }
+}
+
+table.tablet td[data-property="courseTitle"] {
+  padding-left: 24px !important;
+}

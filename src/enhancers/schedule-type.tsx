@@ -11,6 +11,9 @@ function extractData(td: HTMLTableCellElement): Data | null {
   removeTooltip(td);
 
   const text = td.textContent?.trim();
+
+  if (td.className.includes("footable-row-detail-cell")) return null;
+
   if (!text) return null;
 
   const part = text.split(" ", 1)[0] ?? text; // used for hash
@@ -44,6 +47,7 @@ function overlay(props: Data) {
 export default function enhancer(td: HTMLTableCellElement): void {
   const data = extractData(td);
   if (!data) return;
+
 
   const container = createOverlay(td);
   if (!container) return;

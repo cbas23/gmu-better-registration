@@ -44,6 +44,12 @@ export class EnhancedTable {
 
     rows.forEach((row) => {
       const tr = row as HTMLTableRowElement;
+
+      // rows that are only meant for details must not be modified
+      if (tr.classList.contains("footable-row-detail")) {
+        return;
+      }
+
       if (tr.dataset.rmpEnhanced) return;
       tr.dataset.rmpEnhanced = "true";
 
