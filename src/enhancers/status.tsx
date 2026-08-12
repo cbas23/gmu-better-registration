@@ -96,7 +96,7 @@ function overlay(props: Data): JSX.Element {
     >
       <div class="flex items-center gap-1">
         <span
-          class={`${full ? "bg-red-100 text-red-800" : "bg-sky-100 text-sky-800"} relative px-1.5 py-0.5 text-xs rounded-sm font-medium`}
+          class={`${full ? "bg-red-100 text-red-800" : props.hasTimeConflict ? "bg-gray-200 text-gray-800" : "bg-sky-100 text-sky-800"} relative px-1.5 py-0.5 text-xs rounded-sm font-medium`}
         >
           <b>{props.seatsLeft}</b> / {props.seats}
           {props.hasTimeConflict && (

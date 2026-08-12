@@ -5,6 +5,7 @@ import instructor from "@/enhancers/instructor";
 import linked from "@/enhancers/linked";
 import meetingTime from "@/enhancers/meeting-time";
 import note from "@/enhancers/note";
+import reservedSeats from "@/enhancers/reserved-seats";
 import scheduleType from "@/enhancers/schedule-type";
 import status from "@/enhancers/status";
 import title from "@/enhancers/title";
@@ -25,6 +26,7 @@ function main() {
   EnhancedTable.registerEnhancer("linked", linked);
   EnhancedTable.registerEnhancer("meetingTime", meetingTime);
   EnhancedTable.registerEnhancer("note", note);
+  EnhancedTable.registerEnhancer("reservedSeats", reservedSeats);
   EnhancedTable.registerEnhancer("scheduleType", scheduleType);
   EnhancedTable.registerEnhancer("courseTitle", title);
   EnhancedTable.registerEnhancer("status", status);
