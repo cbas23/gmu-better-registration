@@ -2,7 +2,7 @@
   "name": "gmu-better-registration",
   "description": "Enhances GMU course registration with RateMyProfessors data",
   "private": true,
-  "version": "0.2.7",
+  "version": "0.2.8",
   "author": "cbas23",
   "type": "module",
   "scripts": {

@@ -33,7 +33,10 @@ function extractData(td: HTMLTableCellElement): Data | null {
 
 function overlay(props: Data) {
   return (
-    <div class="absolute inset-0 flex items-center px-2 pointer-events-auto">
+    <div
+      class="absolute inset-0 flex items-center px-2 pointer-events-auto"
+      title={props.text}
+    >
       <span
         class="text-xs truncate font-bold pl-1.5 py-0.5 rounded-sm"
         style={{ color: props.color }}
