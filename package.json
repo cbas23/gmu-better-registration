@@ -1,5 +1,5 @@
 {
-  "name": "gmu-better-registration",
+  "name": "better-gmu-registration",
   "description": "Enhances GMU course registration with RateMyProfessors data",
   "private": true,
   "version": "0.2.8",

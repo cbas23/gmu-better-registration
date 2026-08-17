@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="public/favicon.svg" alt="GMU Better Registration icon" width="128" height="128">
+  <img src="public/favicon.svg" alt="Better GMU Registration icon" width="128" height="128">
 </p>
 
-# GMU Better Registration
+# Better GMU Registration
 
 A Chrome and Firefox extension that makes George Mason University's course-registration tables easier to scan and adds RateMyProfessors data directly beside each instructor.
 

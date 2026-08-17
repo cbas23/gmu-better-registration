@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "wxt-solid-starter",
+      "name": "better-gmu-registration",
       "dependencies": {
         "solid-js": "^1.9.11",
         "zod": "^4.4.1",

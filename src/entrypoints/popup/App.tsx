@@ -63,13 +63,13 @@ function App() {
             <img
               class="logo"
               src="/icon/icon.svg"
-              alt="GMU Better Registration logo"
+              alt="Better GMU Registration logo"
             />
           </div>
 
           <div class="brand-copy">
             <p class="eyebrow">Made for Mason</p>
-            <p class="brand-name">Better Registration</p>
+            <p class="brand-name">Better GMU Registration</p>
           </div>
 
           <span class="beta-badge">Beta</span>

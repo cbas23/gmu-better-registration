@@ -7,13 +7,13 @@ export default defineConfig({
   srcDir: "src",
 
   manifest: ({ browser }) => ({
-    name: "GMU Better Registration",
+    name: "Better GMU Registration",
     description: "Enhances GMU course registration with RateMyProfessors data",
     host_permissions: ["https://www.ratemyprofessors.com/*"],
     ...(browser === "firefox" && {
       browser_specific_settings: {
         gecko: {
-          id: "gmu-better-registration@cbas23",
+          id: "better-gmu-registration@cbas23",
           strict_min_version: "140.0",
           data_collection_permissions: {
             required: ["websiteContent"],
