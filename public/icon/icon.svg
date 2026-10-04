@@ -106,7 +106,8 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(12.8,12.8) scale(0.8)">
     <rect
        style="fill:url(#linearGradient7);fill-opacity:1"
        id="rect1"
