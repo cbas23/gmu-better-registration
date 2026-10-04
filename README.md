@@ -8,6 +8,23 @@ A Chrome and Firefox extension that makes George Mason University's course-regis
 
 It runs on GMU's `StudentRegistrationSsb` pages, follows their dynamically rendered tables, and enhances course search, class search, registration history, and the default registration view.
 
+## Demo
+
+Scan color-coded instructor ratings and meeting times, then hover over an instructor to see their RateMyProfessors details.
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="promo/screenshot_1.png" alt="GMU registration search results with inline instructor ratings, meeting days, seat availability, and course labels" width="100%">
+      <p align="center">Enhanced registration search results</p>
+    </td>
+    <td width="50%" valign="top">
+      <img src="promo/screenshot_2.png" alt="Expanded registration table showing an instructor tooltip with overall rating, difficulty, would-take-again percentage, and rating count" width="100%">
+      <p align="center">Instructor ratings and hover details</p>
+    </td>
+  </tr>
+</table>
+
 ## Features
 
 - Shows each matched instructor's RateMyProfessors score inline, with a tooltip for difficulty, would-take-again percentage, rating count, and department.

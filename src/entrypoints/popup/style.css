@@ -1,11 +1,7 @@
-@import "tailwindcss";
-
 :root {
-  color: #17251d;
-  background: #f5f1e8;
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  color: #202723;
+  background: #fff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -14,311 +10,98 @@
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
-  margin: 0;
-  min-width: 376px;
-  min-height: 100%;
-}
-
 body {
-  background: #f5f1e8;
+  width: 320px;
+  margin: 0;
 }
 
-button,
-a {
-  font: inherit;
+.overview {
+  padding: 24px;
+  color: #fff;
+  background: linear-gradient(to bottom, #01602f, #023d25);
 }
 
-.popup-shell {
-  width: 376px;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 100% 100%, rgb(255 200 46 / 10%), transparent 35%),
-    #f7f4ed;
-}
-
-.hero {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  padding: 20px 22px 28px;
-  color: #fffdf6;
-  background:
-    linear-gradient(132deg, rgb(255 255 255 / 5%), transparent 45%),
-    linear-gradient(145deg, #075a3b 0%, #004f35 56%, #003c2a 100%);
-}
-
-.hero::after {
-  position: absolute;
-  right: -30px;
-  bottom: -68px;
-  z-index: -1;
-  width: 180px;
-  height: 180px;
-  border: 1px solid rgb(255 202 48 / 15%);
-  border-radius: 50%;
-  content: "";
-}
-
-.hero-glow {
-  position: absolute;
-  z-index: -1;
-  border-radius: 999px;
-  filter: blur(2px);
-  pointer-events: none;
-}
-
-.hero-glow-one {
-  top: -70px;
-  right: -55px;
-  width: 180px;
-  height: 180px;
-  background: rgb(255 198 38 / 10%);
-}
-
-.hero-glow-two {
-  bottom: -90px;
-  left: 35px;
-  width: 150px;
-  height: 150px;
-  background: rgb(0 32 22 / 22%);
-}
-
-.brand-row {
+.brand {
   display: flex;
   align-items: center;
-  gap: 11px;
-}
-
-.logo-frame {
-  display: grid;
-  width: 48px;
-  height: 48px;
-  flex: 0 0 auto;
-  place-items: center;
-  overflow: hidden;
-  border: 1px solid rgb(255 218 105 / 38%);
-  border-radius: 13px;
-  background: #fffdf7;
-  box-shadow:
-    0 8px 18px rgb(0 29 19 / 28%),
-    inset 0 0 0 1px rgb(255 255 255 / 70%);
+  gap: 12px;
 }
 
 .logo {
   display: block;
-  width: 42px;
-  height: 42px;
+  flex: none;
+  border: 2px solid #fff;
+  border-radius: 10px;
 }
 
-.brand-copy {
-  min-width: 0;
-}
-
-.eyebrow,
-.brand-name,
-.hero-kicker,
-.hero-description,
-.benefit h2,
-.benefit p {
+h1 {
   margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.3;
 }
 
-.eyebrow {
-  margin-bottom: 2px;
-  color: #f5c841;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.15em;
-  line-height: 1;
-  text-transform: uppercase;
+.description {
+  margin: 18px 0 0;
+  color: #e0eee6;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-.brand-name {
-  color: #fffdf8;
-  font-size: 15px;
-  font-weight: 730;
-  letter-spacing: -0.015em;
-  line-height: 1.2;
+.feature-section {
+  padding: 20px 24px;
 }
 
-.beta-badge {
-  margin-left: auto;
-  padding: 5px 8px 4px;
-  border: 1px solid rgb(255 207 66 / 35%);
-  border-radius: 999px;
-  color: #ffda69;
-  background: rgb(255 203 47 / 9%);
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.hero-copy {
-  max-width: 320px;
-  padding-top: 27px;
-}
-
-.hero-kicker {
-  margin-bottom: 7px;
-  color: #f3c63e;
-  font-size: 11px;
-  font-weight: 760;
-  letter-spacing: 0.04em;
-}
-
-.hero h1 {
-  max-width: 300px;
+.features {
   margin: 0;
-  color: #fffef9;
-  font-size: 31px;
-  font-weight: 780;
-  letter-spacing: -0.045em;
-  line-height: 1.02;
-}
-
-.hero-description {
-  max-width: 285px;
-  margin-top: 10px;
-  color: rgb(239 248 242 / 75%);
+  padding-left: 18px;
+  color: #626b65;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
-.content {
-  padding: 22px;
+.features li + li {
+  margin-top: 4px;
 }
 
-.benefit-list {
+.links {
   display: grid;
-  gap: 16px;
+  grid-template-columns: max-content max-content;
+  align-items: start;
+  gap: 2px 20px;
+  padding: 10px 24px 16px;
+  border-top: 1px solid #e5e8e6;
 }
 
-.benefit {
-  display: grid;
-  grid-template-columns: 38px 1fr;
-  gap: 12px;
-  align-items: center;
-}
-
-.benefit-icon {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border: 1px solid #e4dece;
-  border-radius: 11px;
-  color: #0a6544;
-  background: #fffdf8;
-  box-shadow: 0 3px 10px rgb(33 45 37 / 5%);
-}
-
-.benefit-icon svg {
-  width: 19px;
-  height: 19px;
-  overflow: visible;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.7;
-}
-
-.benefit-icon .rmp-mark {
-  width: 22px;
-  height: 22px;
-}
-
-.rmp-mark .rmp-bubble {
-  fill: #e4f5f8;
-  stroke: #087c96;
-  stroke-width: 1.35;
-}
-
-.rmp-mark text {
-  fill: #08758c;
-  stroke: none;
-  font-family: inherit;
-  font-size: 5.2px;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-}
-
-.benefit h2 {
-  color: #183026;
+.links a {
+  padding: 4px 0;
+  color: #006633;
   font-size: 13px;
-  font-weight: 750;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-}
-
-.benefit p {
-  margin-top: 3px;
-  color: #6a746e;
-  font-size: 11px;
   line-height: 1.4;
-}
-
-.popup-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 22px;
-  border-top: 1px solid #e6e0d3;
-}
-
-.credit-row {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 13px 0 0;
-  color: #727b75;
-  font-size: 10px;
-  font-weight: 590;
-}
-
-.credit-row a {
-  color: #076346;
-  font-weight: 750;
   text-decoration: none;
+  white-space: nowrap;
 }
 
-.credit-row a:hover {
-  color: #004b35;
+.links a:hover {
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
 }
 
-.credit-row a:focus-visible {
-  border-radius: 3px;
-  outline: 2px solid rgb(7 99 70 / 28%);
-  outline-offset: 2px;
+.links a:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid #006633;
+  outline-offset: 4px;
 }
 
-.credit-divider {
-  width: 1px;
-  height: 13px;
-  background: #d9d3c7;
+.made-by {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+  color: #626b65;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-.repository-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.repository-link svg {
-  width: 12px;
-  height: 12px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
+.contact-link {
+  grid-column: 1 / -1;
+  justify-self: start;
 }
