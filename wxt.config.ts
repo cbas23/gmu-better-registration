@@ -8,7 +8,8 @@ export default defineConfig({
 
   manifest: ({ browser }) => ({
     name: "Better GMU Registration",
-    description: "Enhances GMU course registration with RateMyProfessors data",
+    description:
+      "Enhances GMU course registration page with various UI improvements and RateMyProfessors data",
     host_permissions: ["https://www.ratemyprofessors.com/*"],
     ...(browser === "firefox" && {
       browser_specific_settings: {

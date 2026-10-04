@@ -12,6 +12,8 @@ It runs on GMU's `StudentRegistrationSsb` pages, follows their dynamically rende
 
 Scan color-coded instructor ratings and meeting times, then hover over an instructor to see their RateMyProfessors details.
 
+Instructor names and locations in the screenshots are anonymized for demonstration.
+
 <table>
   <tr>
     <td width="50%" valign="top">
@@ -167,10 +169,10 @@ wxt.config.ts               WXT, manifest, browser, and Tailwind configuration
 Enhancers are registered by the GMU cell's `xe-field` attribute.
 
 1. Create `src/enhancers/your-field.tsx`.
-2. Register the enhancer at module scope with `EnhancedTable.registerEnhancer("fieldName", enhancerFn)`.
-3. Add a side-effect import to `src/entrypoints/content.ts`.
+2. Export the cell enhancer function as the module's default export.
+3. Import it in `src/entrypoints/content.ts` and register the exact field key inside `main()` with `EnhancedTable.registerEnhancer("fieldName", enhancerFn)`.
 
-The registered fields are currently `instructor`, `meetingTime`, `status`, `attribute`, `note`, `linked`, `add`, and `scheduleType`.
+The registered fields are currently `instructor`, `meetingTime`, `status`, `attribute`, `note`, `linked`, `add`, `scheduleType`, `reservedSeats`, and `courseTitle`.
 
 ## Development notes
 

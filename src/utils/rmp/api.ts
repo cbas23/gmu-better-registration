@@ -52,6 +52,7 @@ async function rmpQuery<T>(
       Authorization: `Basic ${RMP_AUTH_TOKEN}`,
     },
     body: JSON.stringify({ operationName, query, variables }),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!response.ok) {

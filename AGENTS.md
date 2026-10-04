@@ -21,8 +21,8 @@ WXT generates the extension manifest and discovers entrypoints from `src/entrypo
 ### Entrypoints
 
 - `src/entrypoints/background.ts` — background service worker. It synchronously registers a raw `browser.runtime.onMessage` listener, handles `rmp:searchProfessors`, normalizes the requested name, queries up to 10 GMU professors, and replies asynchronously. Failures return `null`.
-- `src/entrypoints/content.ts` — content script for `*://ssbstureg.gmu.edu/StudentRegistrationSsb/*`. It imports every enhancer for registration side effects, selects the table container for the current path, waits for dynamically rendered containers/tables with `MutationObserver`, and starts one `EnhancedTable` per table.
-- `src/entrypoints/popup/` — custom SolidJS promotional popup. `App.tsx` contains its copy and links, `style.css` contains most popup styling, and `index.html` also imports the shared full Tailwind stylesheet.
+- `src/entrypoints/content.ts` — content script for `*://ssbstureg.gmu.edu/StudentRegistrationSsb/*`. It imports each enhancer and registers it inside `main()`, selects the table container for the current path, waits for dynamically rendered containers/tables with `MutationObserver`, and starts one `EnhancedTable` per table.
+- `src/entrypoints/popup/` — custom SolidJS promotional popup. `App.tsx` contains its copy and links, `style.css` contains most popup styling, and `main.tsx` imports the popup stylesheet.
 
 The content script maps registration views to these container IDs:
 
@@ -34,7 +34,7 @@ The content script maps registration views to these container IDs:
 ### Enhancer system
 
 - `src/utils/enhanced-table.ts` owns the static enhancer registry keyed by the cell's `xe-field` value.
-- Each `src/enhancers/*.tsx` module registers itself at module evaluation time with `EnhancedTable.registerEnhancer(key, fn)`.
+- Each `src/enhancers/*.tsx` module exports a default cell enhancer; `content.ts` registers it inside `main()` with `EnhancedTable.registerEnhancer(key, fn)`.
 - `EnhancedTable` styles headers, compacts cell padding, marks processed rows with `data-rmp-enhanced`, and reprocesses newly inserted rows after table mutations.
 - UI enhancers call `createOverlay()` from `src/utils/overlay.ts` and mount a SolidJS component with `render()`. `createOverlay()` returns `null` if the cell already contains one.
 - `src/utils/tooltip.tsx` implements the `use:tooltip` Solid directive and portals a single active fixed-position tooltip into `document.body`.
@@ -50,8 +50,10 @@ Registered `xe-field` keys:
 - `scheduleType` — displays a deterministic color-coded schedule-type label
 - `add` — removes the host tooltip and normalizes the cell height/padding
 - `linked` — removes the host tooltip
+- `reservedSeats` — displays reserved and unreserved seat counts with a tooltip
+- `courseTitle` — removes the host tooltip
 
-To add an enhancer, create `src/enhancers/your-field.tsx`, register the exact `xe-field` key at module scope, and add a side-effect import in `src/entrypoints/content.ts`.
+To add an enhancer, create `src/enhancers/your-field.tsx` with a default export, import it in `src/entrypoints/content.ts`, and register the exact `xe-field` key inside `main()`.
 
 ### RateMyProfessors client
 
@@ -68,8 +70,8 @@ Every RMP response is structurally validated with Zod. The hard-coded Basic auth
 ### Styling and assets
 
 - `src/assets/tailwind-content.css` imports only Tailwind theme and utilities, intentionally excluding preflight so the content script does not reset GMU's page styles. It also defines table hover behavior.
-- `src/assets/tailwind.css` imports full Tailwind and is used by the popup.
-- `public/icon/` contains the extension SVG and PNG icon variants. Root `public/icon.svg`, `public/wxt.svg`, and `src/assets/solid.svg` are legacy/template assets and are not referenced by current source.
+- `src/assets/tailwind.css` imports full Tailwind but is not currently imported by the popup, which uses its own stylesheet.
+- `public/icon/` contains the extension SVG and PNG icon variants. `src/assets/solid.svg` is a legacy/template asset and is not referenced by current source; `public/favicon.svg` is used in the README.
 
 ## Conventions
 
@@ -87,7 +89,7 @@ Every RMP response is structurally validated with Zod. The hard-coded Basic auth
 
 - `.wxt/` and `.output/` are generated and gitignored; never edit them manually.
 - The extension version comes from `package.json`; WXT uses it for generated manifests and archive names.
-- The popup's `REPOSITORY_URL` is currently the placeholder `https://github.com/cbas23/REPOSITORY`.
+- The popup links to `https://github.com/cbas23/gmu-better-registration` and its public `SECURITY.md` privacy policy.
 - `src/components/` is empty; current UI lives in enhancer modules, popup files, or `src/utils/`.
 - `example.html` is a saved registration-page fixture for offline DOM inspection, not a build input. `rpm-spec.md` is RMP GraphQL reference material, not source code.
 - `TODO.md` is intentionally gitignored even though an older copy remains tracked.

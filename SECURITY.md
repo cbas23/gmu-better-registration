@@ -84,7 +84,7 @@ store disclosures before the changed behavior is released.
 Please do not disclose suspected vulnerabilities in a public issue. Use the
 repository's private **Report a vulnerability** form instead:
 
-<https://github.com/cbas23/better-gmu-registration/security/advisories/new>
+<https://github.com/cbas23/gmu-better-registration/security/advisories/new>
 
 Include the affected extension version, browser, reproduction steps, and the
 potential impact. Privacy questions that do not contain sensitive details may
