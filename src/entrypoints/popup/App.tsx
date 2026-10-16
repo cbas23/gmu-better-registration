@@ -1,60 +1,73 @@
 const REPOSITORY_URL = "https://github.com/cbas23/gmu-better-registration";
+const AUTHOR_URL = "https://github.com/cbas23";
 const CONTACT_EMAIL = "contact@cbas23.me";
 
+const FEATURES = [
+  "RateMyProfessors ratings",
+  "Compact, easier-to-read tables",
+  "Clear meeting times and seat counts",
+];
+
 function App() {
+  const version = browser.runtime.getManifest().version;
+
   return (
     <main class="popup">
-      <section class="overview" aria-labelledby="popup-title">
-        <header class="brand">
-          <img class="logo" src="/icon/48.png" alt="" width="48" height="48" />
-          <h1 id="popup-title">
-            Better GMU
-            <br />
-            Registration
-          </h1>
-        </header>
+      <header class="overview">
+        <div class="brand">
+          <span class="logo">
+            <img src="/icon/128.png" alt="" width="128" height="128" />
+          </span>
+          <div class="brand-text">
+            <h1>Better GMU Registration</h1>
+            <span class="version">v{version}</span>
+          </div>
+        </div>
 
         <p class="description">
           A simpler way to browse classes in Patriot Web.
         </p>
+      </header>
+
+      <section class="feature-section" aria-label="Features">
+        <ul class="features">
+          {FEATURES.map((feature) => (
+            <li>{feature}</li>
+          ))}
+        </ul>
       </section>
 
-      <div class="feature-section">
-        <ul class="features">
-          <li>RateMyProfessors ratings</li>
-          <li>Compact, easier-to-read tables</li>
-          <li>Clear meeting times and seat counts</li>
-        </ul>
-      </div>
-
-      <nav class="links" aria-label="Project links">
-        <a href={REPOSITORY_URL} target="_blank" rel="noopener noreferrer">
-          GitHub repository
-        </a>
-        <a
-          href={`${REPOSITORY_URL}/blob/main/SECURITY.md`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Privacy policy
-        </a>
-        <span class="made-by">
-          Made by{" "}
+      <footer class="footer">
+        <nav class="links" aria-label="Project links">
+          <a href={REPOSITORY_URL} target="_blank" rel="noopener noreferrer">
+            GitHub repository
+          </a>
           <a
-            href="https://github.com/cbas23"
+            href={`${REPOSITORY_URL}/blob/main/SECURITY.md`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            cbas23
+            Privacy policy
           </a>
-        </span>
-        <span class="made-by">
-          Contact me{" "}
-          <a class="contact-link" href={`mailto:${CONTACT_EMAIL}`}>
-            {CONTACT_EMAIL}
-          </a>
-        </span>
-      </nav>
+        </nav>
+
+        <dl class="meta">
+          <div>
+            <dt>Made by</dt>
+            <dd>
+              <a href={AUTHOR_URL} target="_blank" rel="noopener noreferrer">
+                cbas23
+              </a>
+            </dd>
+          </div>
+          <div>
+            <dt>Contact</dt>
+            <dd>
+              <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+            </dd>
+          </div>
+        </dl>
+      </footer>
     </main>
   );
 }

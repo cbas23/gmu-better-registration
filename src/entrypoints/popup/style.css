@@ -1,9 +1,17 @@
 :root {
-  color: #202723;
+  --green: #006633;
+  --green-dark: #023d25;
+  --green-header: #01602f;
+  --text: #202723;
+  --muted: #626b65;
+  --border: #e5e8e6;
+
+  color: var(--text);
   background: #fff;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
@@ -15,93 +23,163 @@ body {
   margin: 0;
 }
 
+a {
+  color: var(--green);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+a:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+/* Header */
+
 .overview {
-  padding: 24px;
+  padding: 22px 24px 20px;
   color: #fff;
-  background: linear-gradient(to bottom, #01602f, #023d25);
+  background: linear-gradient(to bottom, var(--green-header), var(--green-dark));
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .logo {
   display: block;
   flex: none;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
   border: 2px solid #fff;
   border-radius: 10px;
+  /* Matches the icon's gradient so its rounded corners blend into the frame */
+  background: linear-gradient(to bottom, #006530, #003922);
+}
+
+/* The icon PNGs keep transparent padding (12/128 per side) for the toolbar; crop it here */
+.logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scale(1.2308);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
 h1 {
   margin: 0;
   font-size: 18px;
   font-weight: 650;
-  line-height: 1.3;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.version {
+  align-self: flex-start;
+  padding: 1px 7px;
+  color: #e0eee6;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  background: rgb(255 255 255 / 0.12);
+  border-radius: 999px;
 }
 
 .description {
-  margin: 18px 0 0;
+  margin: 16px 0 0;
   color: #e0eee6;
   font-size: 13px;
   line-height: 1.6;
+  text-wrap: pretty;
 }
 
+/* Features */
+
 .feature-section {
-  padding: 20px 24px;
+  padding: 18px 24px;
 }
 
 .features {
+  display: grid;
+  gap: 8px;
   margin: 0;
-  padding-left: 18px;
-  color: #626b65;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
-.features li + li {
-  margin-top: 4px;
+.features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.features li::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-top: 7px;
+  background: var(--green);
+  border-radius: 50%;
+}
+
+/* Footer */
+
+.footer {
+  display: grid;
+  gap: 12px;
+  padding: 14px 24px 18px;
+  border-top: 1px solid var(--border);
 }
 
 .links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.meta {
   display: grid;
-  grid-template-columns: max-content max-content;
-  align-items: start;
-  gap: 2px 20px;
-  padding: 10px 24px 16px;
-  border-top: 1px solid #e5e8e6;
+  gap: 4px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
-.links a {
-  padding: 4px 0;
-  color: #006633;
-  font-size: 13px;
-  line-height: 1.4;
-  text-decoration: none;
+.meta div {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+}
+
+.meta dt {
+  color: var(--muted);
+}
+
+.meta dd {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.links a:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.links a:focus-visible {
-  border-radius: 2px;
-  outline: 2px solid #006633;
-  outline-offset: 4px;
-}
-
-.made-by {
-  grid-column: 1 / -1;
-  margin-top: 8px;
-  color: #626b65;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.contact-link {
-  grid-column: 1 / -1;
-  justify-self: start;
 }
