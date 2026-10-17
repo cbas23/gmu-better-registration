@@ -1,8 +1,7 @@
 import type { JSX } from "solid-js";
-import { render } from "solid-js/web";
-import { createOverlay } from "@/utils/overlay";
+import { createOverlay, renderOverlay } from "@/utils/overlay";
 import { Carousel } from "@/utils/carousel";
-import { tooltip } from "@/utils/tooltip";
+import { Tooltip } from "@/utils/tooltip";
 
 interface Info {
   days: string[];
@@ -138,7 +137,7 @@ function DayPillbox(props: { days: string[] }): JSX.Element {
   );
 }
 
-function Tooltip(props: Data): JSX.Element {
+function TooltipContent(props: Data): JSX.Element {
   const cols =
     props.meetings.length <= 4 ? 1 : props.meetings.length <= 8 ? 2 : 3;
 
@@ -225,12 +224,10 @@ function CarouselWrapper(props: {
 
 function overlay(props: Data): JSX.Element {
   return (
-    <div
+    <Tooltip
       class="pointer-events-auto absolute inset-0 flex flex-col justify-center gap-0.5 px-1 cursor-default"
-      use:tooltip={{
-        content: <Tooltip {...props} />,
-        position: "left",
-      }}
+      content={() => <TooltipContent {...props} />}
+      position="left"
     >
       <CarouselWrapper meetings={props.meetings}>
         {props.meetings.map((m) =>
@@ -249,7 +246,7 @@ function overlay(props: Data): JSX.Element {
           ),
         )}
       </CarouselWrapper>
-    </div>
+    </Tooltip>
   );
 }
 
@@ -263,7 +260,7 @@ export default function enhancer(td: HTMLTableCellElement): void {
   container.style.inset = "0";
   container.style.zIndex = "10";
 
-  render(() => overlay(data), container);
+  renderOverlay(() => overlay(data), container);
 
   for (const el of td.querySelectorAll(".meeting, .accordion")) {
     (el as HTMLElement).style.display = "none";

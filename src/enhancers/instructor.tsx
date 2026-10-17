@@ -1,10 +1,9 @@
 import { createSignal, onMount, Show, type Accessor, type JSX } from "solid-js";
-import { render } from "solid-js/web";
 import type { Professor } from "@/utils/rmp";
 import { schoolNodeId, GMU_SCHOOL_LEGACY_ID } from "@/utils/rmp/ids";
-import { createOverlay } from "@/utils/overlay";
+import { createOverlay, renderOverlay } from "@/utils/overlay";
 import { Carousel } from "@/utils/carousel";
-import { tooltip } from "@/utils/tooltip";
+import { Tooltip } from "@/utils/tooltip";
 import { matchProfessorName } from "@/utils/names";
 
 const professorCache = new Map<string, Promise<Professor | null>>();
@@ -62,10 +61,6 @@ interface Data {
 
 interface Entry extends Instructor {
   prof: Accessor<Professor | null | undefined>;
-}
-
-interface ResolvedEntry extends Instructor {
-  prof: Professor | null | undefined;
 }
 
 // "(Primary)" is a text node between the instructor's link and the next <br>.
@@ -148,64 +143,67 @@ function PrimaryBadge(): JSX.Element {
 }
 
 function ProfessorDetails(props: { prof: Professor }): JSX.Element {
-  const p = props.prof;
   return (
     <>
-      <Show when={p.department}>
-        <span class="text-xs text-gray-400">{p.department}</span>
+      <Show when={props.prof.department}>
+        <span class="text-xs text-gray-400">{props.prof.department}</span>
       </Show>
       <div class="flex flex-col gap-1 mt-1">
-        <Show when={p.overall_rating != null}>
+        <Show when={props.prof.overall_rating != null}>
           <div class="flex justify-between text-xs">
             <span class="text-gray-600">Overall Rating</span>
             <span class="font-mono">
               <span
                 class="font-bold px-1.5 py-1 rounded-sm"
                 style={{
-                  color: ratingColor(p.overall_rating!),
-                  "background-color": ratingBgColor(p.overall_rating!),
+                  color: ratingColor(props.prof.overall_rating!),
+                  "background-color": ratingBgColor(props.prof.overall_rating!),
                 }}
               >
-                {p.overall_rating!.toFixed(1)}
+                {props.prof.overall_rating!.toFixed(1)}
               </span>
               <span class="text-gray-500"> / 5</span>
             </span>
           </div>
         </Show>
-        <Show when={p.level_of_difficulty != null}>
+        <Show when={props.prof.level_of_difficulty != null}>
           <div class="flex justify-between text-xs">
             <span class="text-gray-600">Difficulty</span>
             <span class="font-mono">
               <span
                 class="font-bold"
-                style={{ color: difficultyColor(p.level_of_difficulty!) }}
+                style={{
+                  color: difficultyColor(props.prof.level_of_difficulty!),
+                }}
               >
-                {p.level_of_difficulty!.toFixed(1)}
+                {props.prof.level_of_difficulty!.toFixed(1)}
               </span>
               <span class="text-gray-500"> / 5</span>
             </span>
           </div>
         </Show>
-        <Show when={p.percent_take_again != null}>
+        <Show when={props.prof.percent_take_again != null}>
           <div class="flex justify-between text-xs">
             <span class="text-gray-600">Would Take Again</span>
             <span class="font-mono">
               <span
                 class="font-bold"
-                style={{ color: takeAgainColor(p.percent_take_again!) }}
+                style={{
+                  color: takeAgainColor(props.prof.percent_take_again!),
+                }}
               >
-                {p.percent_take_again === -1
+                {props.prof.percent_take_again === -1
                   ? "-"
-                  : p.percent_take_again!.toFixed(0)}
+                  : props.prof.percent_take_again!.toFixed(0)}
               </span>
               <span class="text-gray-500">%</span>
             </span>
           </div>
         </Show>
-        <Show when={p.num_ratings != null}>
+        <Show when={props.prof.num_ratings != null}>
           <div class="flex justify-between text-xs">
             <span class="text-gray-600">Total Ratings</span>
-            <span class="font-mono">{p.num_ratings}</span>
+            <span class="font-mono">{props.prof.num_ratings}</span>
           </div>
         </Show>
       </div>
@@ -213,36 +211,35 @@ function ProfessorDetails(props: { prof: Professor }): JSX.Element {
   );
 }
 
-function TooltipEntry(props: {
-  entry: ResolvedEntry;
-  multi: boolean;
-}): JSX.Element {
-  const e = props.entry;
-  const rated = ratedProfessor(e.prof);
+function TooltipEntry(props: { entry: Entry; multi: boolean }): JSX.Element {
+  const rated = () => ratedProfessor(props.entry.prof());
   return (
     <div class="flex flex-col gap-1 min-w-45">
       <div class="flex items-center justify-between gap-2">
-        <span class="font-bold text-sm">{rated?.name ?? e.name}</span>
-        <Show when={props.multi && e.primary}>
+        <span class="font-bold text-sm">{rated()?.name ?? props.entry.name}</span>
+        <Show when={props.multi && props.entry.primary}>
           <PrimaryTag />
         </Show>
       </div>
-      {rated ? (
-        <ProfessorDetails prof={rated} />
-      ) : (
-        <span class="text-xs text-gray-500">
-          {e.prof === undefined
-            ? "loading..."
-            : props.multi
-              ? "no ratings on ratemyprofessors.com"
-              : "click to search in ratemyprofessors.com"}
-        </span>
-      )}
+      <Show
+        when={rated()}
+        fallback={
+          <span class="text-xs text-gray-500">
+            {props.entry.prof() === undefined
+              ? "loading..."
+              : props.multi
+                ? "no ratings on ratemyprofessors.com"
+                : "click to search in ratemyprofessors.com"}
+          </span>
+        }
+      >
+        {(prof) => <ProfessorDetails prof={prof()} />}
+      </Show>
     </div>
   );
 }
 
-function Tooltip(props: { entries: ResolvedEntry[] }): JSX.Element {
+function TooltipContent(props: { entries: Entry[] }): JSX.Element {
   const multi = props.entries.length > 1;
   const rows = 3;
   const cols = Math.ceil(props.entries.length / rows);
@@ -334,17 +331,10 @@ function overlay(props: Data): JSX.Element {
   const multi = entries.length > 1;
 
   return (
-    <div
+    <Tooltip
       class="pointer-events-auto flex items-center w-full h-full cursor-pointer"
-      use:tooltip={{
-        // Snapshot the signals so the detached tooltip doesn't subscribe to them.
-        content: (
-          <Tooltip
-            entries={entries.map((entry) => ({ ...entry, prof: entry.prof() }))}
-          />
-        ),
-        position: "left",
-      }}
+      content={() => <TooltipContent entries={entries} />}
+      position="left"
     >
       {multi ? (
         <Carousel>
@@ -355,7 +345,7 @@ function overlay(props: Data): JSX.Element {
       ) : (
         <ProfessorRow entry={entries[0]!} multi={false} />
       )}
-    </div>
+    </Tooltip>
   );
 }
 
@@ -369,7 +359,7 @@ export default function enhancer(td: HTMLTableCellElement): void {
   container.style.display = "flex";
   container.style.alignItems = "stretch";
 
-  render(() => overlay(data), container);
+  renderOverlay(() => overlay(data), container);
 
   // Hide the original links, <br>s and "(Primary)" text so multiple
   // instructors don't stretch the row past its fixed height.

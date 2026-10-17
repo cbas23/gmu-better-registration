@@ -1,5 +1,4 @@
-import { render } from "solid-js/web";
-import { createOverlay } from "@/utils/overlay";
+import { createOverlay, renderOverlay } from "@/utils/overlay";
 import { removeTooltip } from "@/utils/utils";
 
 interface Data {
@@ -54,5 +53,5 @@ export default function enhancer(td: HTMLTableCellElement): void {
 
   const container = createOverlay(td);
   if (!container) return;
-  render(() => overlay(data), container);
+  renderOverlay(() => overlay(data), container);
 }

@@ -1,7 +1,6 @@
 import type { JSX } from "solid-js";
-import { render } from "solid-js/web";
-import { createOverlay } from "@/utils/overlay";
-import { tooltip } from "@/utils/tooltip";
+import { createOverlay, renderOverlay } from "@/utils/overlay";
+import { Tooltip } from "@/utils/tooltip";
 import { removeTooltip, clearTitle } from "@/utils/utils";
 
 interface Data {
@@ -23,7 +22,7 @@ function extractData(td: HTMLTableCellElement): Data | null {
 }
 
 function overlay(props: Data): JSX.Element {
-  const tooltipContent = (
+  const tooltipContent = () => (
     <div class="flex flex-col bg-white border border-gray-400 p-2">
       {props.lines.map((line) => (
         <span class="text-xs bg-red-100 px-1.5 py-0.5 text-red-800 first:rounded-t-sm last:rounded-b-sm">
@@ -34,9 +33,10 @@ function overlay(props: Data): JSX.Element {
   );
 
   return (
-    <div
+    <Tooltip
       class="absolute inset-0 flex items-center justify-center pointer-events-auto"
-      use:tooltip={{ content: tooltipContent, position: "left" }}
+      content={tooltipContent}
+      position="left"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +50,7 @@ function overlay(props: Data): JSX.Element {
           clip-rule="evenodd"
         />
       </svg>
-    </div>
+    </Tooltip>
   );
 }
 
@@ -60,5 +60,5 @@ export default function enhancer(td: HTMLTableCellElement): void {
 
   const container = createOverlay(td);
   if (!container) return;
-  render(() => overlay(data), container);
+  renderOverlay(() => overlay(data), container);
 }

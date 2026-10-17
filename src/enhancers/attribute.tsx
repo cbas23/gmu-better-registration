@@ -1,9 +1,8 @@
 import type { JSX } from "solid-js";
-import { render } from "solid-js/web";
-import { createOverlay } from "@/utils/overlay";
+import { createOverlay, renderOverlay } from "@/utils/overlay";
 import { Carousel } from "@/utils/carousel";
 import { removeTooltip } from "@/utils/utils";
-import { tooltip } from "@/utils/tooltip";
+import { Tooltip } from "@/utils/tooltip";
 
 const PILL_COLORS = [
   "bg-red-200",
@@ -40,7 +39,7 @@ function extractData(td: HTMLTableCellElement): Data | null {
 }
 
 function overlay(props: Data): JSX.Element {
-  const tooltipContent = (
+  const tooltipContent = () => (
     <div class="flex flex-col border border-gray-400 bg-white p-2 gap-2">
       <span class="font-bold">Attributes:</span>
       {props.attributes.map((attr) => (
@@ -52,9 +51,10 @@ function overlay(props: Data): JSX.Element {
   );
 
   return (
-    <div
+    <Tooltip
       class="absolute inset-0 flex flex-col h-full pointer-events-auto"
-      use:tooltip={{ content: tooltipContent, position: "left" }}
+      content={tooltipContent}
+      position="left"
     >
       <Carousel>
         {props.attributes.map((attr) => (
@@ -65,7 +65,7 @@ function overlay(props: Data): JSX.Element {
           </div>
         ))}
       </Carousel>
-    </div>
+    </Tooltip>
   );
 }
 
@@ -75,5 +75,5 @@ export default function enhancer(td: HTMLTableCellElement): void {
 
   const container = createOverlay(td);
   if (!container) return;
-  render(() => overlay(data), container);
+  renderOverlay(() => overlay(data), container);
 }

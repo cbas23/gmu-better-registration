@@ -1,102 +1,114 @@
-import { type Accessor, type JSX } from "solid-js";
-import { render } from "solid-js/web";
+import { createEffect, createSignal, onCleanup, Show, type JSX } from "solid-js";
+import { Portal } from "solid-js/web";
 
 export type TooltipPosition = "left" | "right";
 
-export interface TooltipOptions {
-  content: JSX.Element;
+export interface TooltipProps {
+  children: JSX.Element;
+  content: () => JSX.Element;
   position?: TooltipPosition;
+  class?: string;
 }
 
-declare module "solid-js" {
-  namespace JSX {
-    interface Directives {
-      tooltip: TooltipOptions | JSX.Element;
-    }
+let activeClose: (() => void) | null = null;
+const FADE_MS = 150;
+
+export function Tooltip(props: TooltipProps): JSX.Element {
+  const [mounted, setMounted] = createSignal(false);
+  const [visible, setVisible] = createSignal(false);
+  const [anchor, setAnchor] = createSignal({ top: 0, left: 0 });
+  let trigger!: HTMLDivElement;
+  let hideTimer: ReturnType<typeof setTimeout> | undefined;
+  let frame: number | undefined;
+
+  function cancelPending() {
+    clearTimeout(hideTimer);
+    hideTimer = undefined;
+    if (frame !== undefined) cancelAnimationFrame(frame);
+    frame = undefined;
   }
-}
-
-let activeHide: (() => void) | null = null;
-
-function tooltip(
-  el: HTMLElement,
-  options: Accessor<TooltipOptions | JSX.Element>,
-) {
-  let tooltipEl: HTMLDivElement | null = null;
-  let dispose: (() => void) | null = null;
 
   function position() {
-    if (!tooltipEl) return;
-    const rect = el.getBoundingClientRect();
-    const opts = options();
-    const pos =
-      typeof opts === "object" && opts !== null && "position" in opts
-        ? opts.position
-        : undefined;
+    const rect = trigger.getBoundingClientRect();
+    setAnchor({
+      top: rect.top + rect.height / 2,
+      left: props.position === "left" ? rect.left : rect.right,
+    });
+  }
 
-    tooltipEl.style.top = `${rect.top + rect.height / 2}px`;
-    tooltipEl.style.transform = "translateY(-50%)";
-
-    if (pos === "left") {
-      tooltipEl.style.left = `${rect.left}px`;
-      tooltipEl.style.transform += " translateX(-100%)";
-    } else {
-      tooltipEl.style.left = `${rect.right}px`;
-    }
+  function close() {
+    cancelPending();
+    if (activeClose === close) activeClose = null;
+    setVisible(false);
+    setMounted(false);
   }
 
   function show() {
-    if (tooltipEl) return;
-
-    if (activeHide && activeHide !== hide) {
-      activeHide();
-    }
-
-    const opts = options();
-    const isOptions = (v: unknown): v is TooltipOptions =>
-      typeof v === "object" && v !== null && "content" in v;
-
-    const content = isOptions(opts) ? opts.content : opts;
-
-    tooltipEl = document.createElement("div");
-    tooltipEl.className =
-      "fixed z-[9999] bg-gray-900 shadow-md whitespace-nowrap pointer-events-none";
-    tooltipEl.style.opacity = "0";
-    tooltipEl.style.transition = "opacity 150ms ease-in-out";
-
-    dispose = render(() => content, tooltipEl!);
-    document.body.appendChild(tooltipEl);
-    activeHide = hide;
+    cancelPending();
+    if (activeClose && activeClose !== close) activeClose();
+    activeClose = close;
     position();
-    requestAnimationFrame(() => {
-      if (tooltipEl) tooltipEl.style.opacity = "1";
+    setMounted(true);
+    frame = requestAnimationFrame(() => {
+      frame = undefined;
+      setVisible(true);
     });
   }
 
   function hide() {
-    if (!tooltipEl) return;
-    if (activeHide === hide) activeHide = null;
-    tooltipEl.style.opacity = "0";
-    setTimeout(() => {
-      dispose?.();
-      dispose = null;
-      tooltipEl?.remove();
-      tooltipEl = null;
-    }, 150);
+    cancelPending();
+    setVisible(false);
+    hideTimer = setTimeout(close, FADE_MS);
   }
 
-  el.addEventListener("mouseenter", show);
-  el.addEventListener("mouseleave", hide);
-  el.addEventListener("mousedown", show);
-  el.addEventListener("mouseup", hide);
+  createEffect(() => {
+    if (!mounted()) return;
+    position();
+    window.addEventListener("resize", position);
+    document.addEventListener("scroll", position, true);
+    onCleanup(() => {
+      window.removeEventListener("resize", position);
+      document.removeEventListener("scroll", position, true);
+    });
+  });
 
-  return () => {
-    hide();
-    el.removeEventListener("mouseenter", show);
-    el.removeEventListener("mouseleave", hide);
-    el.removeEventListener("mousedown", show);
-    el.removeEventListener("mouseup", hide);
-  };
+  onCleanup(() => {
+    cancelPending();
+    if (activeClose === close) activeClose = null;
+  });
+
+  return (
+    <>
+      <div
+        ref={trigger}
+        class={props.class}
+        onMouseEnter={show}
+        onMouseLeave={hide}
+        onMouseDown={show}
+        onMouseUp={hide}
+      >
+        {props.children}
+      </div>
+      <Show when={mounted()}>
+        <Portal mount={document.body}>
+          <div
+            role="tooltip"
+            class="fixed z-[9999] bg-gray-900 shadow-md whitespace-nowrap pointer-events-none"
+            style={{
+              top: `${anchor().top}px`,
+              left: `${anchor().left}px`,
+              transform:
+                props.position === "left"
+                  ? "translateY(-50%) translateX(-100%)"
+                  : "translateY(-50%)",
+              opacity: visible() ? "1" : "0",
+              transition: `opacity ${FADE_MS}ms ease-in-out`,
+            }}
+          >
+            {props.content()}
+          </div>
+        </Portal>
+      </Show>
+    </>
+  );
 }
-
-export { tooltip };

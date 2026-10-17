@@ -36,8 +36,8 @@ The content script maps registration views to these container IDs:
 - `src/utils/enhanced-table.ts` owns the static enhancer registry keyed by the cell's `xe-field` value.
 - Each `src/enhancers/*.tsx` module exports a default cell enhancer; `content.ts` registers it inside `main()` with `EnhancedTable.registerEnhancer(key, fn)`.
 - `EnhancedTable` styles headers, compacts cell padding, marks processed rows with `data-rmp-enhanced`, and reprocesses newly inserted rows after table mutations.
-- UI enhancers call `createOverlay()` from `src/utils/overlay.ts` and mount a SolidJS component with `render()`. `createOverlay()` returns `null` if the cell already contains one.
-- `src/utils/tooltip.tsx` implements the `use:tooltip` Solid directive and portals a single active fixed-position tooltip into `document.body`.
+- UI enhancers call `createOverlay()` from `src/utils/overlay.ts` and mount a SolidJS component with `renderOverlay()`, which disposes the root when its container is removed. `createOverlay()` returns `null` if the cell already contains one.
+- `src/utils/tooltip.tsx` exports a `Tooltip` component using `Show` and `Portal` for a single active fixed-position tooltip in `document.body`. Pass content as a factory so it is created under the conditional Solid owner.
 - `src/utils/carousel.tsx` rotates multiple meeting or attribute values vertically every three seconds by default.
 
 Registered `xe-field` keys:

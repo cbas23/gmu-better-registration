@@ -1,7 +1,6 @@
 import type { JSX } from "solid-js";
-import { render } from "solid-js/web";
-import { createOverlay } from "@/utils/overlay";
-import { tooltip } from "@/utils/tooltip";
+import { createOverlay, renderOverlay } from "@/utils/overlay";
+import { Tooltip } from "@/utils/tooltip";
 import { removeTooltip, clearTitle } from "@/utils/utils";
 
 interface Data {
@@ -64,7 +63,7 @@ function extractData(td: HTMLTableCellElement): Data | null {
 
 function overlay(props: Data): JSX.Element {
   const full = props.seatsLeft === 0;
-  const tooltipContent = (
+  const tooltipContent = () => (
     <div class="flex flex-col bg-white border border-gray-400 p-2 gap-1 text-xs text-gray-800">
       <span>
         Seats:{" "}
@@ -90,9 +89,10 @@ function overlay(props: Data): JSX.Element {
   );
 
   return (
-    <div
+    <Tooltip
       class="absolute inset-0 flex items-center gap-1 px-1 pointer-events-auto"
-      use:tooltip={{ content: tooltipContent, position: "left" }}
+      content={tooltipContent}
+      position="left"
     >
       <div class="flex items-center gap-1">
         <span
@@ -136,7 +136,7 @@ function overlay(props: Data): JSX.Element {
           </span>
         )}
       </div>
-    </div>
+    </Tooltip>
   );
 }
 
@@ -146,5 +146,5 @@ export default function enhancer(td: HTMLTableCellElement): void {
 
   const container = createOverlay(td);
   if (!container) return;
-  render(() => overlay(data), container);
+  renderOverlay(() => overlay(data), container);
 }
