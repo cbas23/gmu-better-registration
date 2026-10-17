@@ -12,7 +12,6 @@ interface Info {
   room: string;
   startDate: string;
   endDate: string;
-  schedule: string;
 }
 
 interface Data {
@@ -82,14 +81,6 @@ function extractData(td: HTMLTableCellElement): Data | null {
     const { startTime, endTime } = parseTime(scheduleEl);
     const tooltip = parseTooltipRows(el);
 
-    const summary =
-      scheduleEl.querySelector(".ui-pillbox-summary")?.textContent?.trim() ??
-      "";
-    const scheduleText =
-      summary === "None" || !startTime
-        ? ""
-        : `${days.join(",")} ${startTime} - ${endTime}`.trim();
-
     meetings.push({
       days,
       startTime,
@@ -99,7 +90,6 @@ function extractData(td: HTMLTableCellElement): Data | null {
       room: tooltip["Room"] ?? "",
       startDate: tooltip["Start Date"] ?? "",
       endDate: tooltip["End Date"] ?? "",
-      schedule: scheduleText,
     });
   }
 
@@ -146,7 +136,7 @@ function TooltipContent(props: Data): JSX.Element {
       class="bg-white border border-gray-400 p-3"
       style={{
         display: "grid",
-        "grid-template-rows": `repeat(4, auto)`,
+        "grid-template-rows": `repeat(${Math.min(props.meetings.length, 4)}, auto)`,
         "grid-auto-flow": "column",
         "grid-template-columns": `repeat(${cols}, 1fr)`,
         gap: "6px 12px",
@@ -197,12 +187,6 @@ function TooltipContent(props: Data): JSX.Element {
               <div class="flex gap-1">
                 <span class="text-gray-500">End Date:</span>
                 <span class="text-gray-800">{m.endDate}</span>
-              </div>
-            )}
-            {m.schedule && (
-              <div class="flex gap-1 flex-col">
-                <span class="text-gray-500">Schedule:</span>
-                <span class="text-gray-800">{m.schedule}</span>
               </div>
             )}
           </div>
