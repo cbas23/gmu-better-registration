@@ -335,6 +335,7 @@ function overlay(props: Data): JSX.Element {
       class="pointer-events-auto flex items-center w-full h-full cursor-pointer"
       content={() => <TooltipContent entries={entries} />}
       position="left"
+      interactive
     >
       {multi ? (
         <Carousel>

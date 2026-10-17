@@ -8,12 +8,33 @@ export interface TooltipProps {
   content: () => JSX.Element;
   position?: TooltipPosition;
   class?: string;
+  /** Lets the pointer travel from the trigger into the tooltip and interact with it. */
+  interactive?: boolean;
 }
 
+type Point = { x: number; y: number };
+
 let activeClose: (() => void) | null = null;
+// Hit-test for the safe polygon of the tooltip the pointer is currently travelling towards.
+let activeSafeZone: ((p: Point) => boolean) | null = null;
 const FADE_MS = 150;
 const GAP_PX = 8;
 const VIEWPORT_PADDING_PX = 8;
+const SAFE_APEX_BUFFER_PX = 3;
+const SAFE_REST_MS = 300;
+
+// Ray-casting point-in-polygon test.
+function inPolygon(p: Point, poly: Point[]): boolean {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const a = poly[i]!;
+    const b = poly[j]!;
+    if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
 
 export function Tooltip(props: TooltipProps): JSX.Element {
   const [mounted, setMounted] = createSignal(false);
@@ -23,8 +44,12 @@ export function Tooltip(props: TooltipProps): JSX.Element {
   let popup: HTMLDivElement | undefined;
   let hideTimer: ReturnType<typeof setTimeout> | undefined;
   let frame: number | undefined;
+  let side: TooltipPosition = props.position ?? "left";
+  let stopTracking: (() => void) | undefined;
+  let deferred = false;
 
   function cancelPending() {
+    stopTracking?.();
     clearTimeout(hideTimer);
     hideTimer = undefined;
     if (frame !== undefined) cancelAnimationFrame(frame);
@@ -39,7 +64,7 @@ export function Tooltip(props: TooltipProps): JSX.Element {
     const leftSpace = rect.left - GAP_PX - VIEWPORT_PADDING_PX;
     const rightSpace = viewportWidth - rect.right - GAP_PX - VIEWPORT_PADDING_PX;
     const preferred = props.position ?? "left";
-    const side =
+    side =
       leftSpace >= width && rightSpace >= width
         ? preferred
         : leftSpace >= width
@@ -85,6 +110,57 @@ export function Tooltip(props: TooltipProps): JSX.Element {
     hideTimer = setTimeout(close, FADE_MS);
   }
 
+  function onTriggerEnter(e: MouseEvent) {
+    // Another tooltip's safe polygon covers this trigger; let the pointer reach that tooltip
+    // and retry on later moves in case it leaves the polygon while still over this trigger.
+    deferred = activeClose !== close && !!activeSafeZone?.({ x: e.clientX, y: e.clientY });
+    if (!deferred) show();
+  }
+
+  function onTriggerMove(e: MouseEvent) {
+    if (deferred) onTriggerEnter(e);
+  }
+
+  // Triangle from the exit point to the popup's two near corners.
+  function safePolygon(exit: Point): Point[] {
+    const r = popup!.getBoundingClientRect();
+    const edgeX = side === "left" ? r.right : r.left;
+    // Nudge the apex away from the popup so the first pixels of movement stay inside.
+    const apexX = exit.x + (side === "left" ? SAFE_APEX_BUFFER_PX : -SAFE_APEX_BUFFER_PX);
+    return [
+      { x: apexX, y: exit.y },
+      { x: edgeX, y: r.top },
+      { x: edgeX, y: r.bottom },
+    ];
+  }
+
+  function onTriggerLeave(e: MouseEvent) {
+    deferred = false;
+    if (!props.interactive || !popup || !visible()) return hide();
+    cancelPending();
+    const exit = { x: e.clientX, y: e.clientY };
+    const inZone = (p: Point) => inPolygon(p, safePolygon(exit));
+    let restTimer: ReturnType<typeof setTimeout> | undefined;
+    // Close if the pointer rests inside the polygon without reaching the popup.
+    const rest = () => {
+      clearTimeout(restTimer);
+      restTimer = setTimeout(hide, SAFE_REST_MS);
+    };
+    const onMove = (ev: PointerEvent) => {
+      if (inZone({ x: ev.clientX, y: ev.clientY })) rest();
+      else hide();
+    };
+    document.addEventListener("pointermove", onMove);
+    activeSafeZone = inZone;
+    rest();
+    stopTracking = () => {
+      document.removeEventListener("pointermove", onMove);
+      clearTimeout(restTimer);
+      if (activeSafeZone === inZone) activeSafeZone = null;
+      stopTracking = undefined;
+    };
+  }
+
   createEffect(() => {
     if (!mounted()) return;
     position();
@@ -110,8 +186,9 @@ export function Tooltip(props: TooltipProps): JSX.Element {
       <div
         ref={trigger}
         class={props.class}
-        onMouseEnter={show}
-        onMouseLeave={hide}
+        onMouseEnter={onTriggerEnter}
+        onMouseMove={onTriggerMove}
+        onMouseLeave={onTriggerLeave}
         onMouseDown={show}
         onMouseUp={hide}
       >
@@ -122,7 +199,8 @@ export function Tooltip(props: TooltipProps): JSX.Element {
           <div
             ref={popup}
             role="tooltip"
-            class="fixed z-[9999] bg-gray-900 shadow-md whitespace-nowrap pointer-events-none"
+            class="fixed z-[9999] bg-gray-900 shadow-md whitespace-nowrap"
+            classList={{ "pointer-events-none": !props.interactive }}
             style={{
               top: `${anchor().top}px`,
               left: `${anchor().left}px`,
@@ -130,6 +208,8 @@ export function Tooltip(props: TooltipProps): JSX.Element {
               opacity: visible() ? "1" : "0",
               transition: `opacity ${FADE_MS}ms ease-in-out`,
             }}
+            onMouseEnter={() => props.interactive && show()}
+            onMouseLeave={() => props.interactive && hide()}
           >
             {props.content()}
           </div>
