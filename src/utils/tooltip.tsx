@@ -12,12 +12,15 @@ export interface TooltipProps {
 
 let activeClose: (() => void) | null = null;
 const FADE_MS = 150;
+const GAP_PX = 8;
+const VIEWPORT_PADDING_PX = 8;
 
 export function Tooltip(props: TooltipProps): JSX.Element {
   const [mounted, setMounted] = createSignal(false);
   const [visible, setVisible] = createSignal(false);
   const [anchor, setAnchor] = createSignal({ top: 0, left: 0 });
   let trigger!: HTMLDivElement;
+  let popup: HTMLDivElement | undefined;
   let hideTimer: ReturnType<typeof setTimeout> | undefined;
   let frame: number | undefined;
 
@@ -29,10 +32,31 @@ export function Tooltip(props: TooltipProps): JSX.Element {
   }
 
   function position() {
+    if (!popup) return;
     const rect = trigger.getBoundingClientRect();
+    const width = popup.getBoundingClientRect().width;
+    const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+    const leftSpace = rect.left - GAP_PX - VIEWPORT_PADDING_PX;
+    const rightSpace = viewportWidth - rect.right - GAP_PX - VIEWPORT_PADDING_PX;
+    const preferred = props.position ?? "left";
+    const side =
+      leftSpace >= width && rightSpace >= width
+        ? preferred
+        : leftSpace >= width
+          ? "left"
+          : rightSpace >= width
+            ? "right"
+            : leftSpace >= rightSpace
+              ? "left"
+              : "right";
+    const left = side === "left" ? rect.left - GAP_PX - width : rect.right + GAP_PX;
     setAnchor({
       top: rect.top + rect.height / 2,
-      left: props.position === "left" ? rect.left : rect.right,
+      // If neither side fits, keep the popup within the viewport where possible.
+      left: Math.max(
+        VIEWPORT_PADDING_PX,
+        Math.min(left, viewportWidth - width - VIEWPORT_PADDING_PX),
+      ),
     });
   }
 
@@ -47,10 +71,10 @@ export function Tooltip(props: TooltipProps): JSX.Element {
     cancelPending();
     if (activeClose && activeClose !== close) activeClose();
     activeClose = close;
-    position();
     setMounted(true);
     frame = requestAnimationFrame(() => {
       frame = undefined;
+      position();
       setVisible(true);
     });
   }
@@ -64,9 +88,13 @@ export function Tooltip(props: TooltipProps): JSX.Element {
   createEffect(() => {
     if (!mounted()) return;
     position();
+    const observer = new ResizeObserver(position);
+    if (popup) observer.observe(popup);
+    observer.observe(trigger);
     window.addEventListener("resize", position);
     document.addEventListener("scroll", position, true);
     onCleanup(() => {
+      observer.disconnect();
       window.removeEventListener("resize", position);
       document.removeEventListener("scroll", position, true);
     });
@@ -92,15 +120,13 @@ export function Tooltip(props: TooltipProps): JSX.Element {
       <Show when={mounted()}>
         <Portal mount={document.body}>
           <div
+            ref={popup}
             role="tooltip"
             class="fixed z-[9999] bg-gray-900 shadow-md whitespace-nowrap pointer-events-none"
             style={{
               top: `${anchor().top}px`,
               left: `${anchor().left}px`,
-              transform:
-                props.position === "left"
-                  ? "translateY(-50%) translateX(-100%)"
-                  : "translateY(-50%)",
+              transform: "translateY(-50%)",
               opacity: visible() ? "1" : "0",
               transition: `opacity ${FADE_MS}ms ease-in-out`,
             }}
